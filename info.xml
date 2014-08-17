@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<extension key="coop.symbiotic.symbiocivicrm" type="module">
+  <file>symbiocivicrm</file>
+  <name>SymbioTIC local hacks</name>
+  <description>SymbioTIC local crm.s.c hacks.</description>
+  <license>AGPL-3.0</license>
+  <maintainer>
+    <author>Coop SymbioTIC</author>
+    <email>info@symbiotic.coop</email>
+  </maintainer>
+  <releaseDate>2014-08-12</releaseDate>
+  <version>1.0</version>
+  <develStage>alpha</develStage>
+  <compatibility>
+    <ver>4.4</ver>
+    <ver>4.5</ver>
+  </compatibility>
+  <comments></comments>
+  <civix>
+    <namespace>CRM/Symbiotic</namespace>
+  </civix>
+</extension>
