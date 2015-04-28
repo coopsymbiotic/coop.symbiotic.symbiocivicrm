@@ -1,5 +1,6 @@
 Package: coop.symbiotic.symbiocivicrm
-Copyright (C) 2014, Coop SymbioTIC <info@symbiotic.coop>
+Copyright (C) 2014-2015 Mathieu Lutfy <mathieu@bidon.ca>
+Copyright (C) 2014-2015 Coop SymbioTIC <info@symbiotic.coop>
 Licensed under the GNU Affero Public License 3.0 (below).
 
 -------------------------------------------------------------------------------
