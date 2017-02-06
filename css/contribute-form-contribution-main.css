@@ -1,0 +1,14 @@
+.crm-contribution-main-form-block .billing_middle_name-section {
+  display: none !important;
+}
+
+.crm-contribution-main-form-block #crm-submit-buttons .fa-check {
+  display: none;
+}
+
+/**
+ * Invoice payment page.
+ */
+.crm-contribution-page-id-3 #orgOptions {
+  display: none;
+}
