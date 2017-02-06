@@ -5,10 +5,11 @@ class CRM_Symbiotic_Contribute_Form_Contribution_Main {
     $defaults = [];
 
     // JS to validate the domain name
-    CRM_Core_Resources::singleton()->addScriptFile('coop.symbiotic.symbiocivicrm', 'js/contribute-form-contribution-main.js');
-    CRM_Core_Resources::singleton()->addStyleFile('coop.symbiotic.symbiocivicrm', 'css/contribute-form-contribution-main.css');
+    Civi::resources()
+      ->addStyleFile('coop.symbiotic.symbiocivicrm', 'js/contribute-form-contribution-main.js')
+      ->addStyleFile('coop.symbiotic.symbiocivicrm', 'css/contribute-form-contribution-main.css');
 
-    // Renommer le bouton 'Contribute'
+    // Rename the 'Contribute' button
     $buttons = $form->getElement('buttons');
     $buttons->_elements[0]->_attributes['value'] = ts('Submit');
 
