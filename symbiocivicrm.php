@@ -1,6 +1,7 @@
 <?php
 
 require_once 'symbiocivicrm.civix.php';
+use CRM_Symbiocivicrm_ExtensionUtil as E;
 
 /**
  * Implementation of hook_civicrm_config

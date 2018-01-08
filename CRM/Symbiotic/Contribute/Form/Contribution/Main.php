@@ -1,5 +1,7 @@
 <?php
 
+use CRM_Symbiocivicrm_ExtensionUtil as E;
+
 class CRM_Symbiotic_Contribute_Form_Contribution_Main {
   function buildForm(&$form) {
     $defaults = [];
@@ -11,7 +13,7 @@ class CRM_Symbiotic_Contribute_Form_Contribution_Main {
 
     // Rename the 'Contribute' button
     $buttons = $form->getElement('buttons');
-    $buttons->_elements[0]->_attributes['value'] = ts('Submit');
+    $buttons->_elements[0]->_attributes['value'] = E::ts('Submit');
 
     // If an amount was passed in the URL, set it as default
     if ($form->get('id') == 3 && $amount = CRM_Utils_Array::value('amt', $_REQUEST)) {
