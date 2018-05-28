@@ -20,6 +20,14 @@ class CRM_Symbiotic_Contribute_Form_Contribution_Main {
       $defaults['price_7'] = $amount;
     }
 
+    // VPS monthly payment, force recurrence
+    if ($form->get('id') == 4 && $form->elementExists('is_recur')) {
+      $defaults['is_recur'] = 1;
+
+      $e = $form->getElement('is_recur');
+      $e->freeze();
+    }
+
     if (!empty($defaults)) {
       $form->setDefaults($defaults);
     }
