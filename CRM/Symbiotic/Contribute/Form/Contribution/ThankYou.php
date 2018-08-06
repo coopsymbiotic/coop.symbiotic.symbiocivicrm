@@ -20,6 +20,10 @@ class CRM_Symbiotic_Contribute_Form_Contribution_ThankYou {
 
     $url = preg_replace("/[^a-zA-Z0-9]/", '', $url);
 
+    if (empty($url)) {
+      return;
+    }
+
     // FIXME HARDCODE
     $url .= '.symbiotic.coop';
 

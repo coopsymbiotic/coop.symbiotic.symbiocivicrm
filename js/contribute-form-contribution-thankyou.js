@@ -1,4 +1,8 @@
 cj(function($) {
+  if (typeof CRM.symbiocivicrm == 'undefined' || typeof CRM.symbiocivicrm.url == 'undefined') {
+    return;
+  }
+
   console.log("Hi there! Nice to meet you. Let's get this show on the road!");
 
   // Move the status box higher up
@@ -12,32 +16,14 @@ cj(function($) {
   }
 
   var timeoutID = null;
+  var reqtype = 'POST';
 
-  $.ajax({
-    type: "POST",
-    url: 'https://av102.symbiotic.coop/hosting/api/site',
-    data: data,
-    dataType: 'json',
-    crossDomain: true,
-    success: function(data) {
-      if (data.status == 'success') {
-        $('#symbiocivicrm-statusbox-message').html("Site creation request was validated!");
-        $('#symbiocivicrm-statusbox-progress .progress-bar').css('width', '10%').attr('aria-valuenow', 10);
-
-        // Start polling regularly, until the operation is finished
-        timeoutID = window.setTimeout(symbiocivicrmWaitForSite, 2000);
-      }
-      else {
-        $('#symbiocivicrm-statusbox-message').html("Site creation failed... ouch!").addClass('text-danger');
-        $('#symbiocivicrm-statusbox-icon i').removeClass('fa-spin fa-refresh').addClass('fa-exclamation-circle text-danger');
-        $('#symbiocivicrm-statusbox-extra').html(data.message);
-      }
-    }
-  });
+  // Start polling regularly, until the operation is finished
+  timeoutID = window.setTimeout(symbiocivicrmWaitForSite, 2000);
 
   function symbiocivicrmWaitForSite() {
     $.ajax({
-      type: 'GET',
+      type: reqtype,
       url: 'https://av102.symbiotic.coop/hosting/api/site',
       data: data,
       dataType: 'json',
@@ -51,6 +37,13 @@ cj(function($) {
           var p = (data.data.site_status == total_steps ? 100 : data.data.site_status * 16);
           $('#symbiocivicrm-statusbox-progressbar .progress-bar').css('width', p + '%').attr('aria-valuenow', p);
 
+          // Assuming the first request to create the site was a success,
+          // we now loop to get the site status. Otherwise, if the was an error,
+          // the user can still re-send the POST.
+          if (reqtype == 'POST') {
+            reqtype = 'GET';
+          }
+
           if (data.data.site_status == total_steps) {
             $('#symbiocivicrm-statusbox h2').html('Ready');
             $('#symbiocivicrm-statusbox-message').html("Site creation complete!").addClass('text-success');
@@ -60,7 +53,9 @@ cj(function($) {
             $('#symbiocivicrm-statusbox-ready').show();
           }
           else {
-            $('#symbiocivicrm-statusbox-message').html("Site creation in progress! " + data.data.site_status + "/" + total_steps);
+            // Sometimes site_status is undefined.
+            var site_status = (data.data.site_status ? data.data.site_status : '...');
+            $('#symbiocivicrm-statusbox-message').html("Site creation in progress! " + site_status + "/" + total_steps);
 
             if (data.data.site_status == 2) {
               $('#symbiocivicrm-statusbox-extra').html('This step takes a bit more time...').show();
@@ -73,10 +68,17 @@ cj(function($) {
           }
         }
         else {
-          $('#symbiocivicrm-statusbox h2').html('Error');
-          $('#symbiocivicrm-statusbox-message').html("Site creation failed... ouch!").addClass('text-danger');
+          $('#symbiocivicrm-statusbox h2').html(ts('Error'));
+          $('#symbiocivicrm-statusbox-message').html(ts('Site creation failed... ouch!')).addClass('text-danger');
           $('#symbiocivicrm-statusbox-icon i').removeClass('fa-spin fa-refresh').addClass('fa-exclamation-circle text-danger');
-          $('#symbiocivicrm-statusbox-extra').html(data.message);
+          $('#symbiocivicrm-statusbox-extra').html(data.message + ' ' + '<a href="#" id="symbiocivicrm-retry">' + ts('Click here to retry') + '</a>');
+          $('#symbiocivicrm-statusbox-extra').show();
+
+          $('a#symbiocivicrm-retry').click(function(event) {
+            event.stopPropagation();
+            $('#symbiocivicrm-statusbox-extra').fadeOut();
+            timeoutID = window.setTimeout(symbiocivicrmWaitForSite, 2000);
+          });
         }
       }
     });
