@@ -8,7 +8,7 @@ class CRM_Symbiotic_Contribute_Form_Contribution_Main {
 
     // JS to validate the domain name
     Civi::resources()
-      ->addStyleFile('coop.symbiotic.symbiocivicrm', 'js/contribute-form-contribution-main.js')
+      ->addScriptFile('coop.symbiotic.symbiocivicrm', 'js/contribute-form-contribution-main.js')
       ->addStyleFile('coop.symbiotic.symbiocivicrm', 'css/contribute-form-contribution-main.css');
 
     // Rename the 'Contribute' button
