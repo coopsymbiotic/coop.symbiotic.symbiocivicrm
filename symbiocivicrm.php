@@ -168,14 +168,3 @@ function symbiocivicrm_civicrm_pageRun(&$page) {
     }
   }
 }
-
-/**
- * Implements hook_civicrm_caseSummary();
- */
-function symbiocivicrm_civicrm_caseSummary($case_id) {
-  /* [not used]
-  require_once dirname(__FILE__) . '/CRM/Symbiotic/Case/Page/CaseView.php';
-  $foo = new CRM_Symbiotic_Case_Page_CaseView();
-  return $foo->caseSummary($case_id);
-  */
-}
