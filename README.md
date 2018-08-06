@@ -4,13 +4,13 @@ Coop SymbioTIC CiviCRM Aegir signup form
 Hacks used by Coop Symbiotic (https://www.symbiotic.coop) for the signup
 form to create a new CiviCRM instance in Aegir.
 
-To download the latest version of this extension:
+To download the latest version of this extension:  
 https://github.com/coopsymbiotic/coop.symbiotic.symbiocivicrm
 
 Requirements
 ============
 
-- CiviCRM >= 4.6
+- CiviCRM 5.x (latest stable)
 
 Installation
 ============
@@ -45,7 +45,7 @@ Commercial support via Coop SymbioTIC: <https://www.symbiotic.coop>
 License
 =======
 
-(C) 2014-2015 Mathieu Lutfy <mathieu@bidon.ca>
+(C) 2014-2015 Mathieu Lutfy <mathieu@bidon.ca>  
 (C) 2014-2015 Coop SymbioTIC <info@symbiotic.coop>
 
     This program is free software: you can redistribute it and/or modify
