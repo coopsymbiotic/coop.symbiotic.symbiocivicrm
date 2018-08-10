@@ -1,8 +1,9 @@
 Coop SymbioTIC CiviCRM Aegir signup form
 ========================================
 
-Hacks used by Coop Symbiotic (https://www.symbiotic.coop) for the signup
-form to create a new CiviCRM instance in Aegir.
+Customizations by Coop Symbiotic (https://www.symbiotic.coop/en) to create a signup
+form using CiviCRM Contribution Pages, in order to then automatically create a new
+site instance in Aegir.
 
 To download the latest version of this extension:  
 https://github.com/coopsymbiotic/coop.symbiotic.symbiocivicrm
@@ -22,6 +23,8 @@ Install as any other regular CiviCRM extension:
    the correct path in CiviCRM -> Administer -> System -> Directories.
 
 2- Enable the extension from CiviCRM -> Administer -> System -> Extensions.
+
+An admin configuration page is available at: /civicrm/admin/setting/symbiocivicrm
 
 Support
 =======
@@ -45,8 +48,8 @@ Commercial support via Coop SymbioTIC: <https://www.symbiotic.coop>
 License
 =======
 
-(C) 2014-2015 Mathieu Lutfy <mathieu@bidon.ca>  
-(C) 2014-2015 Coop SymbioTIC <info@symbiotic.coop>
+(C) 2014-2018 Mathieu Lutfy <mathieu@bidon.ca>  
+(C) 2014-2018 Coop SymbioTIC <info@symbiotic.coop>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as

@@ -1,10 +1,18 @@
 <?php
 
 class CRM_Symbiotic_Contribute_Form_Contribution_ThankYou {
+  /**
+   * Implements hook_civicrm_buildForm().
+   */
   function buildForm(&$form) {
+    // Only enable on Spark forms.
+    $aegir_pages = Civi::settings()->get('symbiocivicrm_aegir_signup_page');
+    if (!in_array($form->_id, $aegir_pages)) {
+      return;
+    }
+
     // Add a JS settings variable to make sure we have all the data we need
     // to do an API call using Ajax/POST.
-
     $smarty = CRM_Core_Smarty::singleton();
     $trxn_id = $smarty->get_template_vars('trxn_id');
     $email = $smarty->get_template_vars('email');
