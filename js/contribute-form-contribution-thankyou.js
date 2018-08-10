@@ -76,6 +76,8 @@ cj(function($) {
 
           $('a#symbiocivicrm-retry').click(function(event) {
             event.stopPropagation();
+            $('#symbiocivicrm-statusbox-icon i').removeClass('fa-exclamation-circle text-danger');
+            $('#symbiocivicrm-statusbox-message').removeClass('text-danger');
             $('#symbiocivicrm-statusbox-extra').fadeOut();
             timeoutID = window.setTimeout(symbiocivicrmWaitForSite, 2000);
           });
