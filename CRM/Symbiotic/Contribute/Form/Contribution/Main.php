@@ -30,12 +30,20 @@ class CRM_Symbiotic_Contribute_Form_Contribution_Main {
     }
 
     // VPS monthly payment, force recurrence
+    // To update:
+    // drush php-eval 'civicrm_initialize(); $t[] = 5; Civi::settings()->set('symbiocivicrm_force_recur', [4,5]);'
     $recur_pages = Civi::settings()->get('symbiocivicrm_force_recur');
 
     if (in_array($form->get('id'), $recur_pages) && $form->elementExists('is_recur')) {
       $defaults['is_recur'] = 1;
 
       $e = $form->getElement('is_recur');
+      $e->freeze();
+    }
+    elseif (in_array($form->get('id'), $recur_pages) && $form->elementExists('auto_renew')) {
+      $defaults['auto_renew'] = 1;
+
+      $e = $form->getElement('auto_renew');
       $e->freeze();
     }
 
