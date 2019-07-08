@@ -168,3 +168,18 @@ function symbiocivicrm_civicrm_pageRun(&$page) {
     }
   }
 }
+
+/**
+ * Implements hook_cdntaxcalculator_alter_lineitems().
+ */
+function symbiocivicrm_cdntaxcalculator_alter_lineitems(&$line_items) {
+  foreach ($line_items as &$item) {
+    // L'hébergement est toujours taxé avec la taxe du Québec
+    // Sauf pour les clients hors-Canada!
+    // Pour détecter si c'est hors-Canada, on vérifie si des taxes avaient été calculées.
+    if ($item['financial_type_id'] == 5 && !empty($item['tax_rate'])) {
+      $item['tax_rate'] = 0.14975;
+      $item['tax_amount'] = round($item['amount'] * $item['tax_rate'], 2);
+    }
+  }
+}
