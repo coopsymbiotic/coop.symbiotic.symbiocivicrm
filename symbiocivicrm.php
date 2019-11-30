@@ -179,3 +179,10 @@ function symbiocivicrm_cdntaxcalculator_alter_lineitems(&$line_items) {
     }
   }
 }
+
+/**
+ * Implements hook_civicrm_alterAPIPermissions().
+ */
+function symbiocivicrm_civicrm_alterAPIPermissions($entity, $action, &$params, &$permissions) {
+  $permissions['symbiocivicrm']['getconfig'] = ['view all contacts'];
+}

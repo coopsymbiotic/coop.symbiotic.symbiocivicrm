@@ -84,6 +84,28 @@ return [
       ],
     ],
   ],
+  'symbiocivicrm_site_name_fieldid' => [
+    'group_name' => 'domain',
+    'group' => 'symbiocivicrm',
+    'name' => 'symbiocivicrm_site_name_fieldid',
+    'type' => 'String',
+    'default' => NULL,
+    'add' => '1.0',
+    'is_domain' => 1,
+    'is_contact' => 0,
+    'title' => E::ts('Site Name'),
+    'description' => E::ts('Contribution custom field for the human-readable name for the CiviCRM site.'),
+    'help_text' => '',
+    'html_type' => 'select',
+    'pseudoconstant' => [
+      'callback' => 'CRM_Symbiotic_Utils::getContributionCustomFields',
+    ],
+    'settings_pages' => [
+      'aegir' => [
+        'weight' => 15,
+      ],
+    ],
+  ],
   'symbiocivicrm_domain_suffix' => [
     'group_name' => 'domain',
     'group' => 'symbiocivicrm',
@@ -99,7 +121,7 @@ return [
     'html_type' => 'text',
     'settings_pages' => [
       'aegir' => [
-        'weight' => 15,
+        'weight' => 16,
       ],
     ],
   ],
@@ -121,7 +143,7 @@ return [
     ],
     'settings_pages' => [
       'aegir' => [
-        'weight' => 16,
+        'weight' => 17,
       ],
     ],
   ],
@@ -143,7 +165,7 @@ return [
     ],
     'settings_pages' => [
       'aegir' => [
-        'weight' => 16,
+        'weight' => 18,
       ],
     ],
   ],
