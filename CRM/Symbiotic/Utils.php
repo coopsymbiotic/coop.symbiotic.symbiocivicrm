@@ -25,10 +25,10 @@ class CRM_Symbiotic_Utils {
    *
    */
   public static function getAegirServer($value) {
-    $server = NULL;
+    $site_locale_fieldid = Civi::settings()->get('symbiocivicrm_aegir_server_fieldid');
 
     $og = civicrm_api3('CustomField', 'get', [
-      'id' => '271',
+      'id' => $site_locale_fieldid,
       'return' => 'option_group_id',
       'sequential' => 1,
     ])['values'][0]['option_group_id'];
@@ -39,8 +39,34 @@ class CRM_Symbiotic_Utils {
       'sequential' => 1,
     ])['values'][0]['description'];
 
+    // Ex: aegir-1.example.org;fr_CA
     $parts = explode(';', $server);
     $server = $parts[0];
+
+    return $server;
+  }
+
+  /**
+   *
+   */
+  public static function getLocaleFromValue($value) {
+    $site_locale_fieldid = Civi::settings()->get('symbiocivicrm_aegir_server_fieldid');
+
+    $og = civicrm_api3('CustomField', 'get', [
+      'id' => $site_locale_fieldid,
+      'return' => 'option_group_id',
+      'sequential' => 1,
+    ])['values'][0]['option_group_id'];
+
+    $server = civicrm_api3('OptionValue', 'get', [
+      'option_group_id' => $og,
+      'value' => $value,
+      'sequential' => 1,
+    ])['values'][0]['description'];
+
+    // Ex: aegir-1.example.org;fr_CA
+    $parts = explode(';', $server);
+    $server = $parts[1];
 
     return $server;
   }

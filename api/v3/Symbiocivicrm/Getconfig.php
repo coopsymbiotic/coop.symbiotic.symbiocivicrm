@@ -82,9 +82,12 @@ function civicrm_api3_symbiocivicrm_getconfig($params) {
   $site_name_fieldid = Civi::settings()->get('symbiocivicrm_site_name_fieldid');
   $site_locale_fieldid = Civi::settings()->get('symbiocivicrm_aegir_server_fieldid');
 
+  $t = $contribution['custom_' . $site_locale_fieldid];
+  $locale = CRM_Symbiotic_Utils::getLocaleFromValue($t);
+
   $settings['site'] = [
     'name' => $contribution['custom_' . $site_name_fieldid],
-    'locale' => $contribution['custom_' . $site_locale_fieldid],
+    'locale' => $locale,
   ];
 
   return civicrm_api3_create_success($settings);
