@@ -6,7 +6,7 @@
   console.log("Hi there! Nice to meet you. Let's get this show on the road!");
 
   // Move the status box higher up
-  $('form#ThankYou #help').after($('#symbiocivicrm-statusbox'));
+  $('form#ThankYou .help').after($('#symbiocivicrm-statusbox'));
 
   // Create the site
   var data = {
@@ -47,8 +47,9 @@
           if (data.data.site_status == total_steps) {
             $('#symbiocivicrm-statusbox h2').html('Ready');
             $('#symbiocivicrm-statusbox-message').html("Site creation complete!").addClass('text-success');
-            $('#symbiocivicrm-statusbox-icon i').removeClass('fa-spin fa-refresh').addClass('fa-check-square-o text-success');
-            $('#symbiocivicrm-statusbox-extra').html('<a href="' + data.data.login_link + '">' + data.data.login_link + '</a>' + '<p>' + data.data.login_message + '</p>').show();
+            $('#symbiocivicrm-statusbox-icon i').removeClass('fa-spin fa-refresh').addClass('fa-check text-success');
+            $('#symbiocivicrm-statusbox-extra').html('<p>' + data.data.login_message + '</p>').show();
+            $('#symbiocivicrm-statusbox-ready .btn-success').attr('href', 'https://' + data.data.login_link);
             $('#symbiocivicrm-statusbox-ready').removeClass('hidden');
             $('#symbiocivicrm-statusbox-ready').show();
           }
@@ -57,12 +58,7 @@
             var site_status = (data.data.site_status ? data.data.site_status : '...');
             $('#symbiocivicrm-statusbox-message').html("Site creation in progress! " + site_status + "/" + total_steps);
 
-            if (data.data.site_status == 2) {
-              $('#symbiocivicrm-statusbox-extra').html('This step takes a bit more time...').show();
-            }
-            else {
-              $('#symbiocivicrm-statusbox-extra').fadeOut();
-            }
+            $('#symbiocivicrm-statusbox-extra').html("The first step takes 2-3 minutes. Once ready, a login link will be displayed on the screen. If you close this page (or if there is an error), you will receive a welcome email with a login link within 24 hours.").show();
 
             timeoutID = window.setTimeout(symbiocivicrmWaitForSite, 2000);
           }
