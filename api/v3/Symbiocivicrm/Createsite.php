@@ -56,7 +56,7 @@ function civicrm_api3_symbiocivicrm_createsite($params) {
     'base_uri' => $base_uri,
   ]);
 
-  $field_id = Civi::settings()->get('symbiocivicrm_domain_name');
+  $field_id = Civi::settings()->get('symbiocivicrm_domain_name_fieldid');
   $site_url = $contribution['custom_' . $field_id];
 
   if ($suffix = Civi::settings()->get('symbiocivicrm_domain_suffix')) {

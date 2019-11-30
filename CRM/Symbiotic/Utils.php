@@ -3,7 +3,7 @@
 class CRM_Symbiotic_Utils {
 
   /**
-   * Returns a keyed array of contribution text custom fields.
+   * Returns a keyed array of contribution custom fields.
    * Helper function for the settings.
    */
   public static function getContributionCustomFields() {
@@ -13,7 +13,7 @@ class CRM_Symbiotic_Utils {
     $result = civicrm_api3('Contribution', 'getfields');
 
     foreach ($result['values'] as $key => $val) {
-      if (CRM_Utils_Array::value('data_type', $val) == 'String') {
+      if (!empty($val['id']) && empty($val['is_core_field'])) {
         $fields[$val['id']] = $val['title'];
       }
     }

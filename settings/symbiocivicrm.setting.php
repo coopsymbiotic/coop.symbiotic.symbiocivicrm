@@ -103,17 +103,39 @@ return [
       ],
     ],
   ],
-  'symbiocivicrm_domain_name' => [
+  'symbiocivicrm_domain_name_fieldid' => [
     'group_name' => 'domain',
     'group' => 'symbiocivicrm',
-    'name' => 'symbiocivicrm_domain_name',
+    'name' => 'symbiocivicrm_domain_name_fieldid',
     'type' => 'Integer',
     'default' => NULL,
     'add' => '1.0',
     'is_domain' => 1,
     'is_contact' => 0,
     'title' => E::ts('Domain name custom field'),
-    'description' => E::ts('Custom field for the domain name requested by the user. You must create a custom field applicable for contributions, and include that field in the contribution page profilse. If a suffix is present, it will be added to this domain.'),
+    'description' => E::ts('Custom field for the domain name requested by the user. You must create a custom field applicable for contributions, and include that field in the contribution page profiles.'),
+    'help_text' => '',
+    'html_type' => 'select',
+    'pseudoconstant' => [
+      'callback' => 'CRM_Symbiotic_Utils::getContributionCustomFields',
+    ],
+    'settings_pages' => [
+      'aegir' => [
+        'weight' => 16,
+      ],
+    ],
+  ],
+  'symbiocivicrm_aegir_server_fieldid' => [
+    'group_name' => 'domain',
+    'group' => 'symbiocivicrm',
+    'name' => 'symbiocivicrm_aegir_server_fieldid',
+    'type' => 'Integer',
+    'default' => NULL,
+    'add' => '1.0',
+    'is_domain' => 1,
+    'is_contact' => 0,
+    'title' => E::ts('Aegir server custom field'),
+    'description' => E::ts('Custom field for the domain name requested by the user. You must create a custom field applicable for contributions, and include that field in the contribution page profiles. The structure of this field is a bit unusual, double-check the code of getAegirServer().'),
     'help_text' => '',
     'html_type' => 'select',
     'pseudoconstant' => [

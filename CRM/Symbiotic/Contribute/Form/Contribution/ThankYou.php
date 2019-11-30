@@ -16,6 +16,8 @@ class CRM_Symbiotic_Contribute_Form_Contribution_ThankYou {
     $smarty = CRM_Core_Smarty::singleton();
     $trxn_id = $smarty->get_template_vars('trxn_id');
     $email = $smarty->get_template_vars('email');
+    $field_id = Civi::settings()->get('symbiocivicrm_domain_name_fieldid');
+    $url = $form->_params['custom_' . $field_id];
 
     $url = $form->_params['custom_4'];
 
