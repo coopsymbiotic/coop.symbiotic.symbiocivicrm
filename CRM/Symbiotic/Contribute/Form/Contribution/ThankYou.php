@@ -32,8 +32,9 @@ class CRM_Symbiotic_Contribute_Form_Contribution_ThankYou {
       return;
     }
 
-    // FIXME HARDCODE
-    $url .= '.symbiotic.coop';
+    if ($suffix = Civi::settings()->get('symbiocivicrm_domain_suffix')) {
+      $url .= '.' . $suffix;
+    }
 
     CRM_Core_Resources::singleton()->addSetting(array(
       'symbiocivicrm' => array(
