@@ -48,8 +48,8 @@
             $('#symbiocivicrm-statusbox h2').html('Ready');
             $('#symbiocivicrm-statusbox-message').html("Site creation complete!").addClass('text-success');
             $('#symbiocivicrm-statusbox-icon i').removeClass('fa-spin fa-refresh').addClass('fa-check text-success');
-            $('#symbiocivicrm-statusbox-extra').html('<p>' + data.data.login_message + '</p>').show();
-            $('#symbiocivicrm-statusbox-ready .btn-success').attr('href', 'https://' + data.data.login_link);
+            $('#symbiocivicrm-statusbox-extra').html('').hide();
+            $('#symbiocivicrm-statusbox-ready .btn-success').attr('href', data.data.login_link);
             $('#symbiocivicrm-statusbox-ready').removeClass('hidden');
             $('#symbiocivicrm-statusbox-ready').show();
           }
