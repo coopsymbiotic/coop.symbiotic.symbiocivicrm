@@ -1,4 +1,4 @@
-cj(function($) {
+(function($, _, ts) {
   if (typeof CRM.symbiocivicrm == 'undefined' || typeof CRM.symbiocivicrm.url == 'undefined') {
     return;
   }
@@ -85,4 +85,4 @@ cj(function($) {
       }
     });
   }
-});
+})(CRM.$, CRM._, CRM.ts('symbiocivicrm'));

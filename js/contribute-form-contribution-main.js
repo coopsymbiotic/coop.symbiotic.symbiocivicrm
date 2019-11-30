@@ -1,4 +1,4 @@
-(function($) {
+(function($, _, ts) {
   if (typeof CRM.vars.aegir.domain_fieldid == 'undefined') {
     return;
   }
@@ -37,4 +37,4 @@
     name = name.replace(/[^a-zA-Z0-9]/g, '');
     $(this).val(name);
   });
-})(CRM.$);
+})(CRM.$, CRM._, CRM.ts('symbiocivicrm'));
