@@ -14,11 +14,27 @@ class CRM_Symbiotic_Contribute_Form_Contribution_ThankYou {
     // Add a JS settings variable to make sure we have all the data we need
     // to do an API call using Ajax/POST.
     $smarty = CRM_Core_Smarty::singleton();
-    $trxn_id = $smarty->get_template_vars('trxn_id');
     $email = $smarty->get_template_vars('email');
     $field_id = Civi::settings()->get('symbiocivicrm_domain_name_fieldid');
     $url = $form->_params['custom_' . $field_id];
 
+    // On which server to create the site
+    $aegir_server_field_id = Civi::settings()->get('symbiocivicrm_aegir_server_fieldid');
+    $server = $this->getAegirServer($form->_params['custom_' . $aegir_server_field_id]);
+
+    $contact_id = $form->_contactID;
+
+    if (!empty($form->_params['onbehalfof_id'])) {
+      $contact_id = $form->_params['onbehalfof_id'];
+    }
+
+    // FIXME: Normally the form/tpl should have the trxn_id, but this is all we have.
+    $smarty = CRM_Core_Smarty::singleton();
+    $receive_date = $smarty->_tpl_vars['receive_date'];
+
+    $invoice_id = CRM_Core_DAO::singleValueQuery('SELECT invoice_id FROM civicrm_contribution WHERE receive_date = %1 ORDER BY receive_date DESC LIMIT 1', [
+      1 => [$receive_date, 'String'],
+    ]);
 
     $url = strtolower($url);
     $url = preg_replace("/[àáâãäå]/", "a", $url);
@@ -33,15 +49,18 @@ class CRM_Symbiotic_Contribute_Form_Contribution_ThankYou {
       return;
     }
 
+    $this->createDnsHost($url, $server);
+
     if ($suffix = Civi::settings()->get('symbiocivicrm_domain_suffix')) {
       $url .= '.' . $suffix;
     }
 
     CRM_Core_Resources::singleton()->addSetting(array(
       'symbiocivicrm' => array(
-        'trxn_id' => $trxn_id,
+        'trxn_id' => $invoice_id,
         'url' => $url,
         'email' => $email,
+        'server' => $server,
       )
     ));
 
@@ -58,4 +77,42 @@ class CRM_Symbiotic_Contribute_Form_Contribution_ThankYou {
     // JS to talk to the Aegir server and create the site
     CRM_Core_Resources::singleton()->addScriptFile('coop.symbiotic.symbiocivicrm', 'js/contribute-form-contribution-thankyou.js');
   }
+
+  /**
+   *
+   */
+  function getAegirServer($value) {
+    $server = NULL;
+
+    $og = civicrm_api3('CustomField', 'get', [
+      'id' => '271',
+      'return' => 'option_group_id',
+      'sequential' => 1,
+    ])['values'][0]['option_group_id'];
+
+    $server = civicrm_api3('OptionValue', 'get', [
+      'option_group_id' => $og,
+      'value' => $value,
+      'sequential' => 1,
+    ])['values'][0]['description'];
+
+    $parts = explode(';', $server);
+    $server = $parts[0];
+
+    return $server;
+  }
+
+  /**
+   * Create the DNS entry
+   */
+  function createDnsHost($domain, $server) {
+    // Strip the domain suffixes so that foo.civicrm.org becomes just 'foo'.
+    $domain = preg_replace('/^([-a-zA-Z0-9]+).*$/', '${1}', $domain);
+    $server = preg_replace('/^([-a-zA-Z0-9]+).*$/', '${1}', $server);
+
+    $output = exec("sudo /root/bin/gandi-new-entry.sh $domain $server");
+
+    Civi::log()->info("createDnsHost: [$domain -> $server] $output");
+  }
+
 }
