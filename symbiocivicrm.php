@@ -10,10 +10,6 @@ use CRM_Symbiocivicrm_ExtensionUtil as E;
  */
 function symbiocivicrm_civicrm_config(&$config) {
   _symbiocivicrm_civix_civicrm_config($config);
-
-  // [ML] Il faut quand même configurer cette option pour CiviCase,
-  // car ça vérifie explicitement ce répertoire pour les fichiers xml.
-  $config->customTemplateDir = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'templates';
 }
 
 /**
