@@ -3,7 +3,7 @@
     return;
   }
 
-  var domain_name_selector = 'input#custom_' . CRM.vars.aegir.domain_fieldid;
+  var domain_name_selector = 'input#custom_' + CRM.vars.aegir.domain_fieldid;
 
   // Display of the site URL
   $(domain_name_selector).css('width', '10em');
