@@ -20,7 +20,7 @@ class CRM_Symbiotic_Contribute_Form_Contribution_ThankYou {
 
     // On which server to create the site
     $aegir_server_field_id = Civi::settings()->get('symbiocivicrm_aegir_server_fieldid');
-    $server = $this->getAegirServer($form->_params['custom_' . $aegir_server_field_id]);
+    $server = CRM_Symbiotic_Utils::getAegirServer($form->_params['custom_' . $aegir_server_field_id]);
 
     $contact_id = $form->_contactID;
 
@@ -49,7 +49,7 @@ class CRM_Symbiotic_Contribute_Form_Contribution_ThankYou {
       return;
     }
 
-    $this->createDnsHost($url, $server);
+    CRM_Symbiotic_Utils::createDnsHost($url, $server);
 
     if ($suffix = Civi::settings()->get('symbiocivicrm_domain_suffix')) {
       $url .= '.' . $suffix;
@@ -76,43 +76,6 @@ class CRM_Symbiotic_Contribute_Form_Contribution_ThankYou {
 
     // JS to talk to the Aegir server and create the site
     CRM_Core_Resources::singleton()->addScriptFile('coop.symbiotic.symbiocivicrm', 'js/contribute-form-contribution-thankyou.js');
-  }
-
-  /**
-   *
-   */
-  function getAegirServer($value) {
-    $server = NULL;
-
-    $og = civicrm_api3('CustomField', 'get', [
-      'id' => '271',
-      'return' => 'option_group_id',
-      'sequential' => 1,
-    ])['values'][0]['option_group_id'];
-
-    $server = civicrm_api3('OptionValue', 'get', [
-      'option_group_id' => $og,
-      'value' => $value,
-      'sequential' => 1,
-    ])['values'][0]['description'];
-
-    $parts = explode(';', $server);
-    $server = $parts[0];
-
-    return $server;
-  }
-
-  /**
-   * Create the DNS entry
-   */
-  function createDnsHost($domain, $server) {
-    // Strip the domain suffixes so that foo.civicrm.org becomes just 'foo'.
-    $domain = preg_replace('/^([-a-zA-Z0-9]+).*$/', '${1}', $domain);
-    $server = preg_replace('/^([-a-zA-Z0-9]+).*$/', '${1}', $server);
-
-    $output = exec("sudo /root/bin/gandi-new-entry.sh $domain $server");
-
-    Civi::log()->info("createDnsHost: [$domain -> $server] $output");
   }
 
 }
