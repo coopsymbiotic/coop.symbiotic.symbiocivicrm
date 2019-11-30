@@ -24,12 +24,12 @@ cj(function($) {
   function symbiocivicrmWaitForSite() {
     $.ajax({
       type: reqtype,
-      url: 'https://av102.symbiotic.coop/hosting/api/site',
+      url: 'https://' + CRM.symbiocivicrm.server + '/hosting/api/site',
       data: data,
       dataType: 'json',
       crossDomain: true,
       success: function(data) {
-        console.log('GET response received from av102:');
+        console.log('GET response received from Aegir server:');
         console.log(data);
 
         if (data.status == 'success') {

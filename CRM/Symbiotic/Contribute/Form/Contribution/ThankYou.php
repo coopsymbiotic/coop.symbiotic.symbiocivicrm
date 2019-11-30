@@ -19,7 +19,6 @@ class CRM_Symbiotic_Contribute_Form_Contribution_ThankYou {
     $field_id = Civi::settings()->get('symbiocivicrm_domain_name_fieldid');
     $url = $form->_params['custom_' . $field_id];
 
-    $url = $form->_params['custom_4'];
 
     $url = strtolower($url);
     $url = preg_replace("/[àáâãäå]/", "a", $url);
