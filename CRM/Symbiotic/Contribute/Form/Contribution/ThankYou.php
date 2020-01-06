@@ -28,13 +28,22 @@ class CRM_Symbiotic_Contribute_Form_Contribution_ThankYou {
       $contact_id = $form->_params['onbehalfof_id'];
     }
 
-    // FIXME: Normally the form/tpl should have the trxn_id, but this is all we have.
-    $smarty = CRM_Core_Smarty::singleton();
-    $receive_date = $smarty->_tpl_vars['receive_date'];
+    // FIXME: Normally the form/tpl should have the invoice, needs to be fixed in core.
+    // For now we assume there aren't too many transactions at the same time and just fetch
+    // the latest succesful contribution on an aegir page.
+    //
+    // $smarty = CRM_Core_Smarty::singleton();
+    // $invoice_id = $smarty->_tpl_vars['invoice_id'];
 
-    $invoice_id = CRM_Core_DAO::singleValueQuery('SELECT invoice_id FROM civicrm_contribution WHERE receive_date = %1 ORDER BY receive_date DESC LIMIT 1', [
-      1 => [$receive_date, 'String'],
+    $invoice_id = CRM_Core_DAO::singleValueQuery('SELECT invoice_id FROM civicrm_contribution WHERE contribution_page_id IN (%1) AND contribution_status_id = 1 ORDER BY receive_date DESC LIMIT 1', [
+      1 => [implode(',', $aegir_pages), 'CommaSeparatedIntegers'],
     ]);
+
+    // Also note: this is not checking is_test=0, but later Aegir will
+    // use the REST API to Contribution.get, and that will assume is_test=0.
+    // Therefore we can test part of the process, but not all of it (unless
+    // we temporarily edit the Aegir hosting_restapi code).
+    Civi::log()->debug('AEGIR found invoice_id: ' . $invoice_id);
 
     $url = strtolower($url);
     $url = preg_replace("/[àáâãäå]/", "a", $url);
@@ -46,6 +55,7 @@ class CRM_Symbiotic_Contribute_Form_Contribution_ThankYou {
     $url = preg_replace("/[^a-zA-Z0-9]/", '', $url);
 
     if (empty($url)) {
+      Civi::log()->info('AEGIR url was empty. Request cancelled.');
       return;
     }
 
@@ -55,14 +65,14 @@ class CRM_Symbiotic_Contribute_Form_Contribution_ThankYou {
       $url .= '.' . $suffix;
     }
 
-    CRM_Core_Resources::singleton()->addSetting(array(
-      'symbiocivicrm' => array(
+    CRM_Core_Resources::singleton()->addSetting([
+      'symbiocivicrm' => [
         'trxn_id' => $invoice_id,
         'url' => $url,
         'email' => $email,
         'server' => $server,
-      )
-    ));
+      ],
+    ]);
 
     $smarty->assign('symbiocivicrm_url', 'https://' . $url);
 
