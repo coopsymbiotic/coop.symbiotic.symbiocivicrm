@@ -33,7 +33,7 @@
         console.log(data);
 
         if (data.status == 'success') {
-          var total_steps = 6;
+          var total_steps = 8;
           var p = (data.data.site_status == total_steps ? 100 : data.data.site_status * 16);
           $('#symbiocivicrm-statusbox-progressbar .progress-bar').css('width', p + '%').attr('aria-valuenow', p);
 
@@ -56,9 +56,14 @@
           else {
             // Sometimes site_status is undefined.
             var site_status = (data.data.site_status ? data.data.site_status : '...');
-            $('#symbiocivicrm-statusbox-message').html("Site creation in progress! " + site_status + "/" + total_steps);
+            $('#symbiocivicrm-statusbox-message').html("Site creation in progress! Step " + site_status + " of " + total_steps + ".");
 
-            $('#symbiocivicrm-statusbox-extra').html("The first step takes 2-3 minutes. Once ready, a login link will be displayed on the screen. If you close this page (or if there is an error), you will receive a welcome email with a login link within 24 hours.").show();
+            if (data.data.site_status <= 2) {
+              $('#symbiocivicrm-statusbox-extra').html('This can take a minute or two.').show();
+            }
+            else {
+              $('#symbiocivicrm-statusbox-extra').fadeOut();
+            }
 
             timeoutID = window.setTimeout(symbiocivicrmWaitForSite, 2000);
           }
