@@ -62,10 +62,11 @@ function civicrm_api3_symbiocivicrm_getconfig($params) {
       'is_active' => 1,
       'contact_id_b' => $contact_id_org,
       // 'api.Contact.get' => ['id' => "\$value.contact_id_a"], // not working?
+      'sequential' => 1,
     ]);
 
     $contact = civicrm_api3('Contact', 'Getsingle', [
-      'id' => $result[0]['contact_id_a'],
+      'id' => $result['values'][0]['contact_id_a'],
     ]);
 
     $settings['individual'] = [
