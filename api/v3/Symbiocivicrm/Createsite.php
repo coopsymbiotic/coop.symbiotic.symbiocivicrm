@@ -74,6 +74,6 @@ function civicrm_api3_symbiocivicrm_createsite($params) {
 
   return civicrm_api3_create_success([
     'code' => $response->getStatusCode(),
-    'body' => $response->getBody(),
+    'body' => $response->getBody()->getContents(),
   ]);
 }
