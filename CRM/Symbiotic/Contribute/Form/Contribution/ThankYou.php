@@ -33,9 +33,9 @@ class CRM_Symbiotic_Contribute_Form_Contribution_ThankYou {
     // the latest succesful contribution on an aegir page.
     //
     // $smarty = CRM_Core_Smarty::singleton();
-    // $invoice_id = $smarty->_tpl_vars['invoice_id'];
+    // $trxn_id = $smarty->_tpl_vars['trxn_id'];
 
-    $invoice_id = CRM_Core_DAO::singleValueQuery('SELECT invoice_id FROM civicrm_contribution WHERE contribution_page_id IN (%1) AND contribution_status_id = 1 ORDER BY receive_date DESC LIMIT 1', [
+    $trxn_id = CRM_Core_DAO::singleValueQuery('SELECT trxn_id FROM civicrm_contribution WHERE contribution_page_id IN (%1) AND contribution_status_id = 1 ORDER BY receive_date DESC LIMIT 1', [
       1 => [implode(',', $aegir_pages), 'CommaSeparatedIntegers'],
     ]);
 
@@ -43,7 +43,7 @@ class CRM_Symbiotic_Contribute_Form_Contribution_ThankYou {
     // use the REST API to Contribution.get, and that will assume is_test=0.
     // Therefore we can test part of the process, but not all of it (unless
     // we temporarily edit the Aegir hosting_restapi code).
-    Civi::log()->debug('AEGIR found invoice_id: ' . $invoice_id);
+    Civi::log()->debug('AEGIR found trxn_id: ' . $trxn_id);
 
     $url = strtolower($url);
     $url = preg_replace("/[àáâãäå]/", "a", $url);
@@ -67,7 +67,7 @@ class CRM_Symbiotic_Contribute_Form_Contribution_ThankYou {
 
     CRM_Core_Resources::singleton()->addSetting([
       'symbiocivicrm' => [
-        'trxn_id' => $invoice_id,
+        'trxn_id' => $trxn_id,
         'url' => $url,
         'email' => $email,
         'server' => $server,

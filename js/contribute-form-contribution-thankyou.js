@@ -19,9 +19,9 @@
   var reqtype = 'POST';
 
   // Start polling regularly, until the operation is finished
-  timeoutID = window.setTimeout(symbiocivicrmWaitForSite, 2000);
+  timeoutID = window.setTimeout(CRM.symbiocivicrmWaitForSite, 2000);
 
-  function symbiocivicrmWaitForSite() {
+  CRM.symbiocivicrmWaitForSite = function() {
     $.ajax({
       type: reqtype,
       url: 'https://' + CRM.symbiocivicrm.server + '/hosting/api/site',
@@ -65,12 +65,12 @@
               $('#symbiocivicrm-statusbox-extra').fadeOut();
             }
 
-            timeoutID = window.setTimeout(symbiocivicrmWaitForSite, 2000);
+            timeoutID = window.setTimeout(CRM.symbiocivicrmWaitForSite, 2000);
           }
         }
         else {
           $('#symbiocivicrm-statusbox h2').html(ts('Error'));
-          $('#symbiocivicrm-statusbox-message').html(ts('Site creation failed... ouch!')).addClass('text-danger');
+          $('#symbiocivicrm-statusbox-message').html(ts('Site creation failed. Very sorry for the inconvenience, we will fix it as soon as possible. Invoice ID:') + CRM.symbiocivicrm.trxn_id).addClass('text-danger');
           $('#symbiocivicrm-statusbox-icon i').removeClass('fa-spin fa-refresh').addClass('fa-exclamation-circle text-danger');
           $('#symbiocivicrm-statusbox-extra').html(data.message + ' ' + '<a href="#" id="symbiocivicrm-retry">' + ts('Click here to retry') + '</a>');
           $('#symbiocivicrm-statusbox-extra').show();
@@ -80,7 +80,7 @@
             $('#symbiocivicrm-statusbox-icon i').removeClass('fa-exclamation-circle text-danger');
             $('#symbiocivicrm-statusbox-message').removeClass('text-danger');
             $('#symbiocivicrm-statusbox-extra').fadeOut();
-            timeoutID = window.setTimeout(symbiocivicrmWaitForSite, 2000);
+            timeoutID = window.setTimeout(CRM.symbiocivicrmWaitForSite, 2000);
           });
         }
       }

@@ -25,9 +25,16 @@ function civicrm_api3_symbiocivicrm_getconfig_spec($params) {
  */
 function civicrm_api3_symbiocivicrm_getconfig($params) {
 
-  $contribution = civicrm_api3('Contribution', 'Getsingle', [
-    'invoice_id' => $params['invoice_id'],
-  ]);
+  try {
+    $contribution = civicrm_api3('Contribution', 'Getsingle', [
+      'invoice_id' => $params['invoice_id'],
+    ]);
+  }
+  catch (Exception $e) {
+    $contribution = civicrm_api3('Contribution', 'Getsingle', [
+      'trxn_id' => $params['invoice_id'],
+    ]);
+  }
 
   $contact = civicrm_api3('Contact', 'Getsingle', [
     'contact_id' => $contribution['contact_id'],
