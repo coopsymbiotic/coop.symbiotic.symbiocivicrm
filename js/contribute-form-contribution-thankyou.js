@@ -13,13 +13,10 @@
     url: CRM.symbiocivicrm.url,
     invoice: CRM.symbiocivicrm.trxn_id,
     email: CRM.symbiocivicrm.email
-  }
+  };
 
   var timeoutID = null;
   var reqtype = 'POST';
-
-  // Start polling regularly, until the operation is finished
-  timeoutID = window.setTimeout(CRM.symbiocivicrmWaitForSite, 2000);
 
   CRM.symbiocivicrmWaitForSite = function() {
     $.ajax({
@@ -85,5 +82,9 @@
         }
       }
     });
-  }
+  };
+
+  // Start polling regularly, until the operation is finished
+  timeoutID = window.setTimeout(CRM.symbiocivicrmWaitForSite, 2000);
+
 })(CRM.$, CRM._, CRM.ts('symbiocivicrm'));
