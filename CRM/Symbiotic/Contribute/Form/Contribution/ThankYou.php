@@ -28,14 +28,12 @@ class CRM_Symbiotic_Contribute_Form_Contribution_ThankYou {
       $contact_id = $form->_params['onbehalfof_id'];
     }
 
-    // FIXME: Normally the form/tpl should have the invoice, needs to be fixed in core.
+    // FIXME: Normally the form/tpl should have the invoice or trxn_id, needs to be fixed in core.
     // For now we assume there aren't too many transactions at the same time and just fetch
     // the latest succesful contribution on an aegir page.
-    //
-    // $smarty = CRM_Core_Smarty::singleton();
-    // $trxn_id = $smarty->_tpl_vars['trxn_id'];
-
-    $trxn_id = CRM_Core_DAO::singleValueQuery('SELECT trxn_id FROM civicrm_contribution WHERE contribution_page_id IN (%1) AND contribution_status_id = 1 ORDER BY receive_date DESC LIMIT 1', [
+    // NB: we intentionally do not check the contribution_status_id because a webhook IPN might
+    // not have finished processing yet (Stripe).
+    $trxn_id = CRM_Core_DAO::singleValueQuery('SELECT trxn_id FROM civicrm_contribution WHERE contribution_page_id IN (%1) ORDER BY receive_date DESC LIMIT 1', [
       1 => [implode(',', $aegir_pages), 'CommaSeparatedIntegers'],
     ]);
 
