@@ -24,16 +24,27 @@ function civicrm_api3_symbiocivicrm_getconfig_spec($params) {
  * @throws API_Exception
  */
 function civicrm_api3_symbiocivicrm_getconfig($params) {
-
-  try {
-    $contribution = civicrm_api3('Contribution', 'Getsingle', [
-      'invoice_id' => $params['invoice_id'],
-    ]);
+  if (empty($params['invoice_id'])) {
+    throw new Exception("Missing invoice_id");
   }
-  catch (Exception $e) {
-    $contribution = civicrm_api3('Contribution', 'Getsingle', [
-      'trxn_id' => $params['invoice_id'],
-    ]);
+
+  $contribution = \Civi\Api4\Contribution::get(false)
+    ->addSelect('*', 'Spark.Language', 'Spark.Language:name', 'Spark.Spark_Status')
+    ->addWhere('trxn_id', 'LIKE', '%' . $params['invoice_id'] . '%')
+    ->execute()
+    ->first();
+
+  if (empty($contribution)) {
+    $contribution = \Civi\Api4\Contribution::get(false)
+      ->addSelect('*', 'Spark.Language', 'Spark.Language:name', 'Spark.Spark_Status')
+      ->addWhere('invoice_id', 'LIKE', '%' . $params['invoice_id'] . '%')
+      ->execute()
+      ->first();
+  }
+
+  if (empty($contribution)) {
+    Civi::log()->warning('Symbiocivicrm.getconfig: payment reference not found: ' . $params['invoice_id']);
+    thrown new Exception("Payment reference not found.");
   }
 
   $contact = civicrm_api3('Contact', 'Getsingle', [
@@ -90,11 +101,30 @@ function civicrm_api3_symbiocivicrm_getconfig($params) {
   $site_name_fieldid = Civi::settings()->get('symbiocivicrm_site_name_fieldid');
   $site_locale_fieldid = Civi::settings()->get('symbiocivicrm_aegir_server_fieldid');
 
-  $t = $contribution['custom_' . $site_locale_fieldid];
+  // Get the field api4 ID, group.name
+  // Would not normally be necessary, but the custom fields were created pre-api4,
+  // so we did not normalize the 'name' properties. Requires fixing in a db upgrade.
+  $customField = \Civi\Api4\CustomField::get(false)
+    ->addSelect('name', 'custom_group_id:name')
+    ->addWhere('id', '=', $site_locale_fieldid)
+    ->execute()
+    ->first();
+
+  $cfID = $customField['name'] . '.' . $customField['custom_group_id:name'];
+  $t = $contribution[$cfID];
   $locale = CRM_Symbiotic_Utils::getLocaleFromValue($t);
 
+  $cfSiteName = \Civi\Api4\CustomField::get(false)
+    ->addSelect('name', 'custom_group_id:name')
+    ->addWhere('id', '=', $site_name_fieldid)
+    ->execute()
+    ->first();
+
+  $cfID = $customField['name'] . '.' . $customField['custom_group_id:name'];
+  $site_name = $contribution[$cfID];
+
   $settings['site'] = [
-    'name' => $contribution['custom_' . $site_name_fieldid],
+    'name' => $site_name,
     'locale' => $locale,
   ];
 
