@@ -28,15 +28,16 @@ function civicrm_api3_symbiocivicrm_getconfig($params) {
     throw new Exception("Missing invoice_id");
   }
 
+  // @todo Lookup the customfield names instead of hardcoding.
   $contribution = \Civi\Api4\Contribution::get(false)
-    ->addSelect('*', 'Spark.Language', 'Spark.Language:name', 'Spark.Spark_Status')
+    ->addSelect('*', 'Spark.Language', 'Spark.Language:name', 'Spark.Spark_Status', 'Spark.Site_Name')
     ->addWhere('trxn_id', 'LIKE', '%' . $params['invoice_id'] . '%')
     ->execute()
     ->first();
 
   if (empty($contribution)) {
     $contribution = \Civi\Api4\Contribution::get(false)
-      ->addSelect('*', 'Spark.Language', 'Spark.Language:name', 'Spark.Spark_Status')
+      ->addSelect('*', 'Spark.Language', 'Spark.Language:name', 'Spark.Spark_Status', 'Spark.Site_Name')
       ->addWhere('invoice_id', 'LIKE', '%' . $params['invoice_id'] . '%')
       ->execute()
       ->first();
@@ -120,8 +121,9 @@ function civicrm_api3_symbiocivicrm_getconfig($params) {
     ->execute()
     ->first();
 
-  $cfID = $customField['name'] . '.' . $customField['custom_group_id:name'];
-  $site_name = $contribution[$cfID];
+  // @todo Unhardcode field name
+  // $cfID = $customField['custom_group_id:name'] . '.' . $customField['name'];
+  $site_name = $contribution['Spark.Site_Name'];
 
   $settings['site'] = [
     'name' => $site_name,
