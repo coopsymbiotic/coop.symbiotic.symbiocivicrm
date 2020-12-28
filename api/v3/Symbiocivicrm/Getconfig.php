@@ -44,7 +44,7 @@ function civicrm_api3_symbiocivicrm_getconfig($params) {
 
   if (empty($contribution)) {
     Civi::log()->warning('Symbiocivicrm.getconfig: payment reference not found: ' . $params['invoice_id']);
-    thrown new Exception("Payment reference not found.");
+    throw new Exception("Payment reference not found.");
   }
 
   $contact = civicrm_api3('Contact', 'Getsingle', [
