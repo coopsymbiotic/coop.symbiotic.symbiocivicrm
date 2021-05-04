@@ -169,4 +169,26 @@ return [
       ],
     ],
   ],
+  'symbiocivicrm_expired_help' => [
+    'group_name' => 'domain',
+    'group' => 'symbiocivicrm',
+    'name' => 'symbiocivicrm_expired_help',
+    'type' => CRM_Utils_Type::T_STRING,
+    // @todo This is not working, would prefer a wysiwyg
+    'html_type' => 'wysiwyg',
+    'attributes' => ['rows' => 2, 'cols' => 40],
+    'default' => NULL,
+    'add' => '1.0',
+    'is_domain' => 1,
+    'is_contact' => 0,
+    'title' => E::ts('Expiration Help'),
+    'description' => E::ts('Help text displayed in-app to admins when their membership/hosting has expired.'),
+    'help_text' => '',
+    'html_type' => 'text',
+    'settings_pages' => [
+      'aegir' => [
+        'weight' => 20,
+      ],
+    ],
+  ],
 ];
