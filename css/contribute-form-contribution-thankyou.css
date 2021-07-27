@@ -1,3 +1,17 @@
 #symbiocivicrm-statusbox-progressbar {
   margin-top: 0.5em;
 }
+
+/* FIXME: This should be in the theme */
+#symbiocivicrm-statusbox-ready .symbiocivicrm-statusbox-btn-wrapper {
+  display: block;
+  text-align: center;
+  padding: 0.5em 0 1em 0; /* top has margin from previous paragraph */
+}
+
+#symbiocivicrm-statusbox-ready .symbiocivicrm-statusbox-btn-wrapper .btn-success {
+  color: white;
+  text-transform: none;
+  font-size: 27px; /* match jumbotron */
+  font-weight: normal;
+}

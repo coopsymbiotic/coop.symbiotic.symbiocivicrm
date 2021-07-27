@@ -12,6 +12,10 @@
     <p id="symbiocivicrm-statusbox-extra"></p>
 
     {* Added here (and hidden initially) to reduce the quantity of JS to generate the HTML *}
-    <div id="symbiocivicrm-statusbox-ready" class="hidden"><p>{ts 1=$symbiocivicrm_url domain="coop.symbiotic.symbiocivicrm"}You may now access your CiviCRM site at <a href="%1">%1</a>.{/ts}</p></div>
+    <div id="symbiocivicrm-statusbox-ready" class="hidden">
+      <div class="symbiocivicrm-statusbox-btn-wrapper">
+        <a class="btn btn-success" href="{$symbiocivicrm_url}">{ts domain="coop.symbiotic.symbiocivicrm"}Click here to access your CiviCRM instance</a>{/ts}
+      </div>
+    </div>
   </div>
 </div>
