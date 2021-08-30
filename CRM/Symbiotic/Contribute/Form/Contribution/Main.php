@@ -31,8 +31,11 @@ class CRM_Symbiotic_Contribute_Form_Contribution_Main {
     if (in_array($form->get('id'), $recur_pages) && $form->elementExists('is_recur')) {
       $defaults['is_recur'] = 1;
 
-      $e = $form->getElement('is_recur');
-      $e->freeze();
+      # [ML] coopsymbiotic/ops#110 Ceci brise Stripe 6.2
+      # $e = $form->getElement('is_recur');
+      # $e->freeze();
+
+      Civi::resources()->addStyle('.is_recur-section { display: none; }');
     }
     elseif (in_array($form->get('id'), $recur_pages) && $form->elementExists('auto_renew')) {
       $defaults['auto_renew'] = 1;

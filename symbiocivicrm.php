@@ -187,3 +187,31 @@ function symbiocivicrm_civicrm_alterAPIPermissions($entity, $action, &$params, &
   $permissions['symbiocivicrm']['getconfig'] = ['view all contacts'];
   $permissions['symbiocivicrm']['getstatus'] = ['view all contacts'];
 }
+
+/**
+ * Implements hook_civicrm_pre().
+ *
+ * Avoids synchronizing contacts that are not 'client' contact-subtypes.
+ */
+function symbiocivicrm_civicrm_pre($op, $entityName, $entityId, &$params) {
+  if ($entityName == 'AccountContact' && in_array($op, ['edit', 'create'])) {
+    $contact = \Civi\Api4\Contact::get(FALSE)
+      ->addSelect('contact_sub_type')
+      ->addWhere('id', '=', $params['contact_id'])
+      ->execute()
+      ->first();
+
+    $is_client = FALSE;
+
+    foreach ($contact['contact_sub_type'] as $subtype) {
+      if (strpos($subtype, 'Client') !== FALSE) {
+        $is_client = TRUE;
+      }
+    }
+
+    if (!$is_client) {
+      $params['accounts_needs_update'] = 0;
+      $params['do_not_sync'] = 1;
+    }
+  }
+}
