@@ -43,10 +43,6 @@ function civicrm_api3_symbiocivicrm_welcome($params) {
 
   $contact_id = $contribution['contact_id'];
 
-  $formattedContactDetails = [];
-
-  $email = NULL;
-
   if (empty($contact_id)) {
     throw new Exception("Contact not found.");
   }
@@ -59,32 +55,23 @@ function civicrm_api3_symbiocivicrm_welcome($params) {
   // @todo Hardcoded template ID
   $msg_template_id = 260;
 
-  $formattedContactDetails[] = $contact;
+  $tplParams = [
+    'civicrm_site_login_url' => $params['loginurl'],
+  ];
 
-  $template = civicrm_api3('MessageTemplate', 'getsingle', [
-    'id' => $msg_template_id,
-  ]);
+  $sendTemplateParams = [
+    'messageTemplateID' => $msg_template_id,
+    'tplParams' => $tplParams,
+    'isTest' => 0,
+    'from' => "CiviCRM Spark <spark@civicrm.org>", // @todo setting? "$domainValues[0] <$domainValues[1]>",
+    'toEmail' => $contact['email'],
+    'toName' => $contact['display_name'],
+    'bcc' => 'mathieu@bidon.ca', // @todo setting?
+  ];
 
-  $subject = $template['msg_subject'];
-  $html_message = $template['msg_html'];
-  $text_message = $template['msg_text'];
-
-  // Replace the token
-  $loginurl_html = '<a href="' . $params['loginurl'] . '">' . $params['loginurl'] . '</a>';
-  $html_message = preg_replace('/LOGINURL/', $loginurl_html, $html_message);
-  $text_message = preg_replace('/LOGINURL/', $params['loginurl'], $text_message);
-
-  list($sent, $activityId) = CRM_Activity_BAO_Activity::sendEmail(
-    $formattedContactDetails,
-    $subject,
-    $text_message,
-    $html_message,
-    NULL,
-    1 // cid=1, system user
-  );
+  list($sent) = CRM_Core_BAO_MessageTemplate::sendTemplate($sendTemplateParams);
 
   return civicrm_api3_create_success([
-    'code' => $response->getStatusCode(),
-    'body' => $response->getBody()->getContents(),
+    'sent' => $sent,
   ]);
 }
