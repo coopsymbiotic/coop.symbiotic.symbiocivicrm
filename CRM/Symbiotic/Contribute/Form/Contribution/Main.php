@@ -65,4 +65,36 @@ class CRM_Symbiotic_Contribute_Form_Contribution_Main {
         'domain_fieldid' => $domain_fieldid,
       ]);
   }
+
+  /**
+   * @see symbiocivicrm_civicrm_validateForm().
+   */
+  public function validateForm(&$fields, &$files, &$form, &$errors) {
+    $aegir_pages = Civi::settings()->get('symbiocivicrm_aegir_signup_page');
+    $domain_fieldid = Civi::settings()->get('symbiocivicrm_domain_name_fieldid');
+
+    if (!in_array($form->get('id'), $aegir_pages)) {
+      return;
+    }
+
+    $custom = 'custom_' . $domain_fieldid;
+
+    if (!empty($fields[$custom])) {
+      if (strlen($fields[$custom]) < 4) {
+        $errors[$custom] = "Please select a CiviCRM Spark domain name with at least 4 letters.";
+        return;
+      }
+
+      $exists = \Civi\Api4\Contribution::get(FALSE)
+        ->addWhere('Spark.Domain_name', '=', $fields[$custom])
+        ->execute()
+        ->first();
+
+      if ($exists) {
+        $errors[$custom] = "The CiviCRM Spark domain name you entered is not available. Please select another one.";
+        return;
+      }
+    }
+  }
+
 }

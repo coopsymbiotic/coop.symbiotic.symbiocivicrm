@@ -138,6 +138,16 @@ function symbiocivicrm_civicrm_buildForm($formName, &$form) {
 }
 
 /**
+ * Implements hook_civicrm_validateForm().
+ */
+function symbiocivicrm_civicrm_validateForm($formName, &$fields, &$files, &$form, &$errors) {
+  if ($formName == 'CRM_Contribute_Form_Contribution_Main') {
+    $foo = new CRM_Symbiotic_Contribute_Form_Contribution_Main();
+    $foo->validateForm($fields, $files, $form, $errors);
+  }
+}
+
+/**
  * Implements hook_civicrm_pageRun() is a completely overkill way.
  * Searches for an override class named after the initial $formName
  * and calls its buildForm().
