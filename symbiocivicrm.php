@@ -149,6 +149,16 @@ function _symbiocivicrm_civicrm_buildForm($event) {
 }
 
 /**
+ * Implements hook_civicrm_validateForm().
+ */
+function symbiocivicrm_civicrm_validateForm($formName, &$fields, &$files, &$form, &$errors) {
+  if ($formName == 'CRM_Contribute_Form_Contribution_Main') {
+    $foo = new CRM_Symbiotic_Contribute_Form_Contribution_Main();
+    $foo->validateForm($fields, $files, $form, $errors);
+  }
+}
+
+/**
  * Implements hook_civicrm_pageRun() is a completely overkill way.
  * Searches for an override class named after the initial $formName
  * and calls its buildForm().
@@ -197,6 +207,7 @@ function symbiocivicrm_cdntaxcalculator_alter_lineitems(&$line_items) {
 function symbiocivicrm_civicrm_alterAPIPermissions($entity, $action, &$params, &$permissions) {
   $permissions['symbiocivicrm']['getconfig'] = ['view all contacts'];
   $permissions['symbiocivicrm']['getstatus'] = ['view all contacts'];
+  $permissions['symbiocivicrm']['welcome'] = ['view all contacts'];
 }
 
 /**

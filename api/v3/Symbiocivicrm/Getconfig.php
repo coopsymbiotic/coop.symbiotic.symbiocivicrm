@@ -31,14 +31,14 @@ function civicrm_api3_symbiocivicrm_getconfig($params) {
   // @todo Lookup the customfield names instead of hardcoding.
   $contribution = \Civi\Api4\Contribution::get(false)
     ->addSelect('*', 'Spark.Language', 'Spark.Language:name', 'Spark.Spark_Status', 'Spark.Site_Name')
-    ->addWhere('trxn_id', 'LIKE', '%' . $params['invoice_id'] . '%')
+    ->addWhere('invoice_id', '=', $params['invoice_id'])
     ->execute()
     ->first();
 
   if (empty($contribution)) {
     $contribution = \Civi\Api4\Contribution::get(false)
       ->addSelect('*', 'Spark.Language', 'Spark.Language:name', 'Spark.Spark_Status', 'Spark.Site_Name')
-      ->addWhere('invoice_id', 'LIKE', '%' . $params['invoice_id'] . '%')
+      ->addWhere('trxn_id', 'LIKE', '%' . $params['invoice_id'] . '%')
       ->execute()
       ->first();
   }
@@ -80,9 +80,12 @@ function civicrm_api3_symbiocivicrm_getconfig($params) {
       'relationship_type_id' => 4, // Employee of
       'is_active' => 1,
       'contact_id_b' => $contact_id_org,
-      // 'api.Contact.get' => ['id' => "\$value.contact_id_a"], // not working?
       'sequential' => 1,
     ]);
+
+    if (empty($result['values'])) {
+      throw new Exception("Symbiocivicrm.Getconfig: Membership is On Behalf Of, but could not the Individual related to this organisation");
+    }
 
     $contact = civicrm_api3('Contact', 'Getsingle', [
       'id' => $result['values'][0]['contact_id_a'],
@@ -95,7 +98,7 @@ function civicrm_api3_symbiocivicrm_getconfig($params) {
     ];
   }
   else {
-    throw new Exception('Unexpected contact type: ' . $contact['contact_type']);
+    throw new Exception("Symbiocivicrm.Getconfig: Unexpected contact type: {$contact['contact_type']}");
   }
 
   // Site information
@@ -111,7 +114,7 @@ function civicrm_api3_symbiocivicrm_getconfig($params) {
     ->execute()
     ->first();
 
-  $cfID = $customField['name'] . '.' . $customField['custom_group_id:name'];
+  $cfID = $customField['custom_group_id:name'] . '.' . $customField['name'];
   $t = $contribution[$cfID];
   $locale = CRM_Symbiotic_Utils::getLocaleFromValue($t);
 

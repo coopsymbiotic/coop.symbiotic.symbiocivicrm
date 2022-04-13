@@ -56,7 +56,8 @@ function civicrm_api3_symbiocivicrm_getstatus($params) {
 
   if (!empty($result['values'])) {
     $status['membership'] = $result['values'][0];
-    $status['membership']['help'] = html_entity_decode(Civi::settings()->get('symbiocivicrm_expired_help'));
+    $status['membership']['help_expiration'] = html_entity_decode(Civi::settings()->get('symbiocivicrm_expired_help'));
+    $status['membership']['help_cancellation'] = html_entity_decode(Civi::settings()->get('symbiocivicrm_cancellation_help'));
   }
 
   return civicrm_api3_create_success($status);
