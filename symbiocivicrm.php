@@ -187,9 +187,9 @@ function symbiocivicrm_civicrm_pageRun(&$page) {
 }
 
 /**
- * Implements hook_cdntaxcalculator_alter_lineitems().
+ * Implements hook_taxcalculator_alter_lineitems().
  */
-function symbiocivicrm_cdntaxcalculator_alter_lineitems(&$line_items) {
+function symbiocivicrm_taxcalculator_alter_lineitems(&$line_items) {
   foreach ($line_items as &$item) {
     // L'hébergement est toujours taxé avec la taxe du Québec
     // Sauf pour les clients hors-Canada!
