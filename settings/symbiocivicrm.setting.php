@@ -213,4 +213,30 @@ return [
       ],
     ],
   ],
+  'symbiocivicrm_membership_types' => [
+    'group_name' => 'domain',
+    'group' => 'symbiocivicrm',
+    'name' => 'symbiocivicrm_membership_types',
+    'type' => 'Array',
+    'default' => NULL,
+    'add' => '1.0',
+    'is_domain' => 1,
+    'is_contact' => 0,
+    'title' => E::ts('Hosting-related membership types'),
+    'description' => '',
+    'help_text' => '',
+    'html_type' => 'select',
+    'html_attributes' => [
+      'multiple' => 1,
+      'class' => 'crm-select2',
+    ],
+    'pseudoconstant' => [
+      'callback' => 'CRM_Member_PseudoConstant::membershipType',
+    ],
+    'settings_pages' => [
+      'aegir' => [
+        'weight' => 25,
+      ],
+    ],
+  ],
 ];
