@@ -10,6 +10,13 @@ use CRM_Symbiocivicrm_ExtensionUtil as E;
  */
 function symbiocivicrm_civicrm_config(&$config) {
   _symbiocivicrm_civix_civicrm_config($config);
+
+
+  if (isset(Civi::$statics[__FUNCTION__])) { return; }
+  Civi::$statics[__FUNCTION__] = 1;
+
+  // Run with a low priority, to run after other hooks
+  Civi::dispatcher()->addListener('hook_civicrm_buildForm', '_symbiocivicrm_civicrm_buildForm', -500);
 }
 
 /**
@@ -122,7 +129,11 @@ function symbiocivicrm_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
  * really big and numerous, and even if I split up into multiple
  * functions, it still makes a really long php file.
  */
-function symbiocivicrm_civicrm_buildForm($formName, &$form) {
+function _symbiocivicrm_civicrm_buildForm($event) {
+  // Main function variables, because we are using a Symfony hook
+  $formName = $event->formName;
+  $form = $event->form;
+
   $formName = str_replace('CRM_', 'CRM_Symbiotic_', $formName);
   $parts = explode('_', $formName);
   $filename = dirname(__FILE__) . '/' . implode('/', $parts) . '.php';
@@ -176,9 +187,9 @@ function symbiocivicrm_civicrm_pageRun(&$page) {
 }
 
 /**
- * Implements hook_cdntaxcalculator_alter_lineitems().
+ * Implements hook_taxcalculator_alter_lineitems().
  */
-function symbiocivicrm_cdntaxcalculator_alter_lineitems(&$line_items) {
+function symbiocivicrm_taxcalculator_alter_lineitems(&$line_items) {
   foreach ($line_items as &$item) {
     // L'hébergement est toujours taxé avec la taxe du Québec
     // Sauf pour les clients hors-Canada!

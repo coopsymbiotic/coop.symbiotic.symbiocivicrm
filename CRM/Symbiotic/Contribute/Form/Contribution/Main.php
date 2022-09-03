@@ -24,6 +24,18 @@ class CRM_Symbiotic_Contribute_Form_Contribution_Main {
       $buttons->_elements[0]->_attributes['value'] = E::ts('Submit');
     }
 
+    if (empty(CRM_Utils_Request::retrieveValue('snippet', 'String'))) {
+      if ($form->elementExists('is_recur')) {
+        Civi::resources()
+          ->addScriptFile('coop.symbiotic.symbioticux', 'js/ui-tweaks.js')
+          ->addScript('CRM.symbioticuxFormRadiosAsButtons(".is_recur_radio-section .content", {mandatory_field: true, button_width: 200});');
+
+        if ($recur = CRM_Utils_Request::retrieveValue('recur', 'Integer')) {
+          $defaults['is_recur'] = 1;
+        }
+      }
+    }
+
     // TODO: This is also not directly relevant
     // VPS monthly payment, force recurrence
     $recur_pages = Civi::settings()->get('symbiocivicrm_force_recur');
