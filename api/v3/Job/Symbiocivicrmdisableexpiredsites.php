@@ -13,7 +13,6 @@ function civicrm_api3_job_symbiocivicrmdisableexpiredsites($params) {
     ->addWhere('membership_type_id', 'IN', $hosting_mtypes)
     ->addWhere('status_id:name', '=', 'Expired')
     ->addOrderBy('end_date', 'DESC')
-    ->setLimit(40) // @todo for now
     ->execute();
 
   foreach ($memberships as $membership) {
@@ -78,41 +77,19 @@ function civicrm_api3_job_symbiocivicrmdisableexpiredsites($params) {
         continue;
       }
 
-      $client = new \GuzzleHttp\Client([
-        // Mostly being lazy, avoid havings to try/catch, we do getStatusCode
-        'http_errors' => false,
-        'base_uri' => 'https://' . $aegir_server,
-      ]);
+      $try_invoice_ids = [
+        // This is the first part of the trxn_id
+        $invoice_id,
+        // Sometimes it was this
+        $contribution['invoice_id'],
+        // And sometimes there were bugs and we sent both Stripe identifies
+        $contribution['trxn_id'],
+      ];
 
-      $response = $client->post('/hosting/api/site/disable', [
-        'form_params' => [
-          'url' => $site_url,
-          'invoice' => $invoice_id,
-        ],
-      ]);
+      $response_code = '';
 
-      $response_code = $response->getStatusCode();
-      $responses[] = $site_url . ': [' . $response_code . '; ' . $aegir_server . '] ' . $response->getBody()->getContents();
-
-      if ($response_code == 200) {
-        // Set the membership status to 'disabled'
-        \Civi\Api4\Membership::update(false)
-          ->addValue('status_id:name', 'Hosting Disabled')
-          ->addValue('is_override', 1)
-          ->addWhere('id', '=', $membership['id'])
-          ->execute();
-      }
-      else {
-        // Try the real invoice_id
-        $response = $client->post('/hosting/api/site/disable', [
-          'form_params' => [
-            'url' => $site_url,
-            'invoice' => $contribution['invoice_id'],
-          ],
-        ]);
-
-        $response_code = $response->getStatusCode();
-        $responses[] = $site_url . ': [' . $response_code . '; ' . $aegir_server . '] ' . $response->getBody()->getContents();
+      foreach ($try_invoice_ids as $try_id) {
+        $response_code = _civicrm_api3_job_symbiocivicrmdisableexpiredsites_disable($aegir_server, $site_url, $try_id, $responses);
 
         if ($response_code == 200) {
           // Set the membership status to 'disabled'
@@ -121,6 +98,8 @@ function civicrm_api3_job_symbiocivicrmdisableexpiredsites($params) {
             ->addValue('is_override', 1)
             ->addWhere('id', '=', $membership['id'])
             ->execute();
+
+          break;
         }
       }
     }
@@ -128,4 +107,24 @@ function civicrm_api3_job_symbiocivicrmdisableexpiredsites($params) {
 
   $output = implode('<br>', $responses);
   return civicrm_api3_create_success($output);
+}
+
+function _civicrm_api3_job_symbiocivicrmdisableexpiredsites_disable($aegir_server, $url, $invoice_id, &$responses) {
+  $client = new \GuzzleHttp\Client([
+    // Mostly being lazy, avoid havings to try/catch, we do getStatusCode
+    'http_errors' => false,
+    'base_uri' => 'https://' . $aegir_server,
+  ]);
+
+  $response = $client->post('/hosting/api/site/disable', [
+    'form_params' => [
+      'url' => $url,
+      'invoice' => $invoice_id,
+    ],
+  ]);
+
+  $response_code = $response->getStatusCode();
+  $responses[] = "$url : [$response_code; $aegir_server] " . $response->getBody()->getContents();
+
+  return $response_code;
 }
