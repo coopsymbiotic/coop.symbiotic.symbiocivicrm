@@ -14,6 +14,10 @@ class CRM_Symbiotic_Contribute_Form_Contribution_Main {
     // If an amount was passed in the URL, set it as default
     if ($form->get('id') == 3 && $amount = CRM_Utils_Array::value('amt', $_REQUEST)) {
       $defaults['price_7'] = $amount;
+      // Hide amount field, since it was set by the URL
+      Civi::resources()->addStyle('.crm-container .crm-price-field-id-7 { display: none; }');
+      // Hide tax label (it will always be zero, taxes are already included)
+      Civi::resources()->addStyle('.crm-container #pricesetTotalTax { display: none; }');
     }
 
     // Rename the 'contribute' button to 'submit'
