@@ -1,6 +1,6 @@
 <?php
 
-use CRM_Symbiocivicrm_ExtensionUtil as E;
+use CRM_Symbiocrm_ExtensionUtil as E;
 
 class CRM_Symbiotic_Contribute_Form_Contribution_Main {
 
