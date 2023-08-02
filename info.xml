@@ -12,10 +12,20 @@
   <version>1.0</version>
   <develStage>alpha</develStage>
   <compatibility>
-    <ver>5</ver>
+    <ver>5.60</ver>
   </compatibility>
-  <comments></comments>
+  <comments/>
   <civix>
-    <namespace>CRM/Symbiotic</namespace>
+    <namespace>CRM/Symbiocrm</namespace>
+    <format>23.02.1</format>
   </civix>
+  <mixins>
+    <mixin>menu-xml@1.0.0</mixin>
+    <mixin>setting-php@1.0.0</mixin>
+    <mixin>smarty-v2@1.0.1</mixin>
+  </mixins>
+  <classloader>
+    <psr0 prefix="CRM_" path="."/>
+    <psr4 prefix="Civi\" path="Civi"/>
+  </classloader>
 </extension>
