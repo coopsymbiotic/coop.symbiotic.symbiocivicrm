@@ -159,19 +159,3 @@ function symbiocivicrm_civicrm_pre($op, $entityName, $entityId, &$params) {
     }
   }
 }
-
-/**
- * Implements hook_civicrm_alterMailParams()
- */
-function symbiocivicrm_civicrm_alterMailParams(&$params, $context) {
-  // Check if this is an email being sent out by the "Contact Us" form
-  // and switch the "from" header so that Gitlab can send replies
-  if ($context == 'singleEmail' && $params['groupName'] == 'msg_tpl_workflow_uf' && $params['valueName'] == 'uf_notify' && strpos($params['toEmail'], 'lab+coopsymbiotic') !== FALSE) {
-    if (preg_match('/- email-2: (.*)/', $params['text'], $matches)) {
-      $params['from'] = $matches[1];
-    }
-    if (preg_match('/- current_employer: (.*)/', $params['text'], $matches)) {
-      $params['subject'] .= ' - ' . $matches[1];
-    }
-  }
-}
