@@ -35,17 +35,39 @@ function civicrm_api3_symbiocivicrm_welcome_spec($params) {
  * @throws API_Exception
  */
 function civicrm_api3_symbiocivicrm_welcome($params) {
-  $contribution_id = $params['contribution_id'];
+  $contribution = null;
 
-  $contribution = civicrm_api3('Contribution', 'getsingle', [
-    'id' => $contribution_id,
-  ]);
+  if (!empty($params['contribution_id'])) {
+    $contribution = \Civi\Api4\Contribution::get(false)
+      ->addSelect('contact_id')
+      ->addWhere('id', '=', $params['contribution_id'])
+      ->execute()
+      ->first();
+  }
+  elseif (!empty($params['invoice_id'])) {
+    // Copied from Getconfig
+    $contribution = \Civi\Api4\Contribution::get(false)
+      ->addSelect('contact_id')
+      ->addWhere('invoice_id', '=', $params['invoice_id'])
+      ->execute()
+      ->first();
+
+    if (empty($contribution)) {
+      $contribution = \Civi\Api4\Contribution::get(false)
+        ->addSelect('contact_id')
+        ->addWhere('trxn_id', 'LIKE', '%' . $params['invoice_id'] . '%')
+        ->execute()
+        ->first();
+    }
+  }
 
   $contact_id = $contribution['contact_id'];
 
   if (empty($contact_id)) {
     throw new Exception("Contact not found.");
   }
+
+  Civi::log()->info('Symbiocrm/Welcome: found contact_id: ' . $contact_id);
 
   $contact = civicrm_api3('Contact', 'getsingle', [
     'id' => $contact_id,
@@ -66,10 +88,20 @@ function civicrm_api3_symbiocivicrm_welcome($params) {
     'from' => "CiviCRM Spark <spark@civicrm.org>", // @todo setting? "$domainValues[0] <$domainValues[1]>",
     'toEmail' => $contact['email'],
     'toName' => $contact['display_name'],
-    'bcc' => 'mathieu@bidon.ca', // @todo setting?
+    'bcc' => 'mathieu@civicrm.org,mathieu@bidon.ca,josh@civicrm.org', // @todo setting
   ];
 
-  list($sent) = CRM_Core_BAO_MessageTemplate::sendTemplate($sendTemplateParams);
+  list($sent, $subject, $text, $html) = CRM_Core_BAO_MessageTemplate::sendTemplate($sendTemplateParams);
+
+  Civi::log()->info('Symbiocrm/Welcome: sending email to ' . $contact['email'] . ', link=' . $params['loginurl'] . ', result = ' . $sent);
+
+  // Create an Email Activity
+  civicrm_api3('Activity', 'create', [
+    'activity_type_id' => 3, // Email
+    'source_contact_id' => $contact_id,
+    'subject' => $subject,
+    'details' => $html,
+  ]);
 
   return civicrm_api3_create_success([
     'sent' => $sent,
