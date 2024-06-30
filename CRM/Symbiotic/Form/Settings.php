@@ -1,6 +1,6 @@
 <?php
 
-use CRM_Symbiocivicrm_ExtensionUtil as E;
+use CRM_Symbiocrm_ExtensionUtil as E;
 
 class CRM_Symbiotic_Form_Settings extends CRM_Core_Form {
   private $_settingFilter = array('group' => 'symbiocivicrm');
