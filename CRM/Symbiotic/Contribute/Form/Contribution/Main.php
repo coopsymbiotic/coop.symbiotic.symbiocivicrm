@@ -23,7 +23,7 @@ class CRM_Symbiotic_Contribute_Form_Contribution_Main {
     // Rename the 'contribute' button to 'submit'
     $submit_pages = Civi::settings()->get('symbiocivicrm_contribute_submit_button');
 
-    if (in_array($form->get('id'), $submit_pages)) {
+    if (!empty($submit_pages) && in_array($form->get('id'), $submit_pages)) {
       $buttons = $form->getElement('buttons');
       $buttons->_elements[0]->_attributes['value'] = E::ts('Submit');
     }
@@ -43,21 +43,17 @@ class CRM_Symbiotic_Contribute_Form_Contribution_Main {
     // TODO: This is also not directly relevant
     // VPS monthly payment, force recurrence
     $recur_pages = Civi::settings()->get('symbiocivicrm_force_recur');
-
-    if (in_array($form->get('id'), $recur_pages) && $form->elementExists('is_recur')) {
-      $defaults['is_recur'] = 1;
-
-      # [ML] coopsymbiotic/ops#110 Ceci brise Stripe 6.2
-      # $e = $form->getElement('is_recur');
-      # $e->freeze();
-
-      Civi::resources()->addStyle('.is_recur-section { display: none; }');
-    }
-    elseif (in_array($form->get('id'), $recur_pages) && $form->elementExists('auto_renew')) {
-      $defaults['auto_renew'] = 1;
-
-      $e = $form->getElement('auto_renew');
-      $e->freeze();
+    if (!empty($recur_pages)) {
+      if (in_array($form->get('id'), $recur_pages) && $form->elementExists('is_recur')) {
+        // Do not freeze the input, it might break Stripe
+        $defaults['is_recur'] = 1;
+        Civi::resources()->addStyle('.is_recur-section { display: none; }');
+      }
+      elseif (in_array($form->get('id'), $recur_pages) && $form->elementExists('auto_renew')) {
+        $defaults['auto_renew'] = 1;
+        $e = $form->getElement('auto_renew');
+        $e->freeze();
+      }
     }
 
     if (!empty($defaults)) {
@@ -69,17 +65,15 @@ class CRM_Symbiotic_Contribute_Form_Contribution_Main {
     $domain_suffix = Civi::settings()->get('symbiocivicrm_domain_suffix');
     $domain_fieldid = Civi::settings()->get('symbiocivicrm_domain_name_fieldid');
 
-    if (!in_array($form->get('id'), $aegir_pages)) {
-      return;
+    if (!empty($aegir_pages) && in_array($form->get('id'), $aegir_pages)) {
+      Civi::resources()
+        ->addScriptFile('coop.symbiotic.symbiocivicrm', 'js/contribute-form-contribution-main.js')
+        ->addStyleFile('coop.symbiotic.symbiocivicrm', 'css/contribute-form-contribution-main.css')
+        ->addVars('aegir', [
+          'domain_suffix' => $domain_suffix,
+          'domain_fieldid' => $domain_fieldid,
+        ]);
     }
-
-    Civi::resources()
-      ->addScriptFile('coop.symbiotic.symbiocivicrm', 'js/contribute-form-contribution-main.js')
-      ->addStyleFile('coop.symbiotic.symbiocivicrm', 'css/contribute-form-contribution-main.css')
-      ->addVars('aegir', [
-        'domain_suffix' => $domain_suffix,
-        'domain_fieldid' => $domain_fieldid,
-      ]);
   }
 
   /**
