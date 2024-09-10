@@ -166,12 +166,17 @@ function symbiocivicrm_civicrm_pre($op, $entityName, $entityId, &$params) {
 function symbiocivicrm_civicrm_alterMailParams(&$params, $context) {
   // Check if this is an email being sent out by the "Contact Us" form
   // and switch the "from" header so that Gitlab can send replies
-  if ($context == 'singleEmail' && $params['groupName'] == 'msg_tpl_workflow_uf' && $params['valueName'] == 'uf_notify' && strpos($params['toEmail'], 'lab+coopsymbiotic') !== FALSE) {
-    if (preg_match('/- email-2: (.*)/', $params['text'], $matches)) {
-      $params['from'] = $matches[1];
+  // @todo This could be converted to using the Gitlab API using the Issues API
+  // and then use /convert_to_issue email@exampl.org
+  // See: https://gitlab.com/gitlab-org/gitlab/-/issues/433376#note_1801953055
+  if (in_array($context, ['singleEmail', 'messageTemplate']) && $params['workflow'] == 'uf_notify' && strpos($params['toEmail'], 'lab+coopsymbiotic') !== FALSE) {
+    Civi::$statics['sparkpost_bypass'] = TRUE;
+
+    if (!empty($params['tplParams']['values']['email-2'])) {
+      $params['from'] = $params['tplParams']['values']['email-2'];
     }
-    if (preg_match('/- current_employer: (.*)/', $params['text'], $matches)) {
-      $params['subject'] .= ' - ' . $matches[1];
+    if (!empty($params['tplParams']['values']['current_employer'])) {
+      $params['subject'] = 'Contact: ' . $params['tplParams']['values']['current_employer'];
     }
   }
 }
