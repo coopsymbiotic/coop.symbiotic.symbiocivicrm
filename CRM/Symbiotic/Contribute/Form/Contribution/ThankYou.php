@@ -70,7 +70,7 @@ class CRM_Symbiotic_Contribute_Form_Contribution_ThankYou {
         'email' => $email,
         'server' => $server,
         // Ex: example.org, helps with our .org to .com migration
-        'crmhost' => $_SERVER['SERVER_NAME'],
+        'crmhost' => 'https://' . $_SERVER['SERVER_NAME'],
       ],
     ]);
 
