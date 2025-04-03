@@ -12,6 +12,7 @@
   var data = {
     url: CRM.symbiocivicrm.url,
     invoice: CRM.symbiocivicrm.trxn_id,
+    crmhost: CRM.symbiocivicrm.crmhost,
     email: CRM.symbiocivicrm.email
   };
 
