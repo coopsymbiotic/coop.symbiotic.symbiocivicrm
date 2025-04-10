@@ -63,19 +63,19 @@ class Getconfig extends \Civi\Api4\Generic\AbstractAction {
       // CiviCRM doesn't give us a better way to fetch this unfortunately (soft credit?).
       $contact_id_org = $contact['contact_id'];
 
-      $result = civicrm_api3('Relationship', 'Get', [
+      $rel = civicrm_api3('Relationship', 'Get', [
         'relationship_type_id' => 4, // Employee of
         'is_active' => 1,
         'contact_id_b' => $contact_id_org,
         'sequential' => 1,
       ]);
 
-      if (empty($result['values'])) {
+      if (empty($rel['values'])) {
         throw new Exception("Symbiocivicrm.Getconfig: Membership is On Behalf Of, but could not the Individual related to this organisation");
       }
 
       $contact = civicrm_api3('Contact', 'Getsingle', [
-        'id' => $result['values'][0]['contact_id_a'],
+        'id' => $rel['values'][0]['contact_id_a'],
       ]);
 
       $settings['individual'] = [

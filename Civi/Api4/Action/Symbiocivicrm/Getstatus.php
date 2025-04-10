@@ -40,7 +40,7 @@ class Getstatus extends \Civi\Api4\Generic\AbstractAction {
     // This assumes that anyone with a valid membership therefore has a valid hosting membership
     // (and not some other type of membership)
     // Ideally we should have a setting for the member org, or valid member types.
-    $result = civicrm_api3('Membership', 'get', [
+    $mem = civicrm_api3('Membership', 'get', [
       'sequential' => 1,
       'active_only' => 1,
       'contact_id' => $contribution['contact_id'],
@@ -48,12 +48,12 @@ class Getstatus extends \Civi\Api4\Generic\AbstractAction {
 
     $status = [];
 
-    if (!empty($result['values'])) {
-      $status['membership'] = $result['values'][0];
+    if (!empty($mem['values'])) {
+      $status['membership'] = $mem['values'][0];
     }
 
     // Fetch the latest membership, so that we can find an expiry date
-    $result = civicrm_api3('Membership', 'get', [
+    $mem = civicrm_api3('Membership', 'get', [
       'sequential' => 1,
       'contact_id' => $contribution['contact_id'],
       'options' => ['sort' => "end_date DESC"],
@@ -61,8 +61,8 @@ class Getstatus extends \Civi\Api4\Generic\AbstractAction {
 
     $status = [];
 
-    if (!empty($result['values'])) {
-      $status['membership'] = $result['values'][0];
+    if (!empty($mem['values'])) {
+      $status['membership'] = $mem['values'][0];
       $status['membership']['help_expiration'] = html_entity_decode(\Civi::settings()->get('symbiocivicrm_expired_help'));
       $status['membership']['help_cancellation'] = html_entity_decode(\Civi::settings()->get('symbiocivicrm_cancellation_help'));
     }
