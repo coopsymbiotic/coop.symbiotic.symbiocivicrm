@@ -1,12 +1,17 @@
 #symbiocivicrm-statusbox-progressbar {
   margin-top: 0.5em;
 }
+#symbiocivicrm-statusbox-progressbar > div {
+  height: 10px;
+  background: #44cb7e;
+  border: 1px solid #CCC;
+}
 
-/* FIXME: This should be in the theme */
 #symbiocivicrm-statusbox-ready .symbiocivicrm-statusbox-btn-wrapper {
   display: block;
   text-align: center;
-  padding: 0.5em 0 1em 0; /* top has margin from previous paragraph */
+  /* top has margin from previous paragraph */
+  padding: 0.5em 0 1em 0;
 }
 
 #symbiocivicrm-statusbox-ready .symbiocivicrm-statusbox-btn-wrapper .btn-success {
@@ -14,4 +19,8 @@
   text-transform: none;
   font-size: 27px; /* match jumbotron */
   font-weight: normal;
+}
+
+#symbiocivicrm-statusbox-ready.hidden {
+  display: none;
 }

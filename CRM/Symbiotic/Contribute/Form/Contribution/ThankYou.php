@@ -37,6 +37,13 @@ class CRM_Symbiotic_Contribute_Form_Contribution_ThankYou {
       1 => [implode(',', $aegir_pages), 'CommaSeparatedIntegers'],
     ]);
 
+    // Free transactions do not have a trxn_id (sponsor discounts)
+    if (!$trxn_id) {
+      $trxn_id = CRM_Core_DAO::singleValueQuery('SELECT invoice_id FROM civicrm_contribution WHERE contribution_page_id IN (%1) ORDER BY receive_date DESC LIMIT 1', [
+        1 => [implode(',', $aegir_pages), 'CommaSeparatedIntegers'],
+      ]);
+    }
+
     // Also note: this is not checking is_test=0, but later Aegir will
     // use the REST API to Contribution.get, and that will assume is_test=0.
     // Therefore we can test part of the process, but not all of it (unless
@@ -49,7 +56,6 @@ class CRM_Symbiotic_Contribute_Form_Contribution_ThankYou {
     $url = preg_replace("/[ôöò]/", "o", $url);
     $url = preg_replace("/[ùû]/", "u", $url);
     $url = preg_replace("/[îì]/", "i", $url);
-
     $url = preg_replace("/[^a-zA-Z0-9]/", '', $url);
 
     if (empty($url)) {
