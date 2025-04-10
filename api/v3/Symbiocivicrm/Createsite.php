@@ -69,6 +69,7 @@ function civicrm_api3_symbiocivicrm_createsite($params) {
       'url' => $site_url,
       'invoice' => $contribution['invoice_id'],
       'email' => $email['email'],
+      'crmhost' => CIVICRM_UF_BASEURL,
     ],
   ]);
 
