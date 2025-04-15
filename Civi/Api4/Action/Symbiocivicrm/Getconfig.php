@@ -63,19 +63,20 @@ class Getconfig extends \Civi\Api4\Generic\AbstractAction {
       // CiviCRM doesn't give us a better way to fetch this unfortunately (soft credit?).
       $contact_id_org = $contact['contact_id'];
 
-      $rel = civicrm_api3('Relationship', 'Get', [
-        'relationship_type_id' => 4, // Employee of
-        'is_active' => 1,
-        'contact_id_b' => $contact_id_org,
-        'sequential' => 1,
-      ]);
+      $relationship = \Civi\Api4\Relationship::get(FALSE)
+        ->addSelect('contact_id_a')
+        ->addWhere('relationship_type_id:name', '=', 'Employee of')
+        ->addWhere('contact_id_b', '=', $contact_id_org)
+        ->addWhere('is_active', '=', TRUE)
+        ->execute()
+        ->first();
 
-      if (empty($rel['values'])) {
-        throw new Exception("Symbiocivicrm.Getconfig: Membership is On Behalf Of, but could not the Individual related to this organisation");
+      if (empty($relationship['contact_id_a'])) {
+        throw new \Exception("Symbiocivicrm.Getconfig: Membership is On Behalf Of, but could not the Individual related to this organisation");
       }
 
       $contact = civicrm_api3('Contact', 'Getsingle', [
-        'id' => $rel['values'][0]['contact_id_a'],
+        'id' => $relationship['contact_id_a'],
       ]);
 
       $settings['individual'] = [
@@ -85,7 +86,7 @@ class Getconfig extends \Civi\Api4\Generic\AbstractAction {
       ];
     }
     else {
-      throw new Exception("Symbiocivicrm.Getconfig: Unexpected contact type: {$contact['contact_type']}");
+      throw new \Exception("Symbiocivicrm.Getconfig: Unexpected contact type: {$contact['contact_type']}");
     }
 
     // Site information
