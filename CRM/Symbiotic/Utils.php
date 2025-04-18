@@ -84,4 +84,11 @@ class CRM_Symbiotic_Utils {
     Civi::log()->info("createDnsHost: [$domain -> $server] $output");
   }
 
+  public static function listOfMessageTemplates() {
+    return \Civi\Api4\MessageTemplate::get(FALSE)
+      ->addWhere('is_active', '=', TRUE)
+      ->execute()
+      ->column('msg_title', 'id');
+  }
+
 }

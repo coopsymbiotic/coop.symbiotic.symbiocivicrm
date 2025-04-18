@@ -239,4 +239,30 @@ return [
       ],
     ],
   ],
+  'symbiocivicrm_welcome_template_id' => [
+    'group_name' => 'domain',
+    'group' => 'symbiocivicrm',
+    'name' => 'symbiocivicrm_welcome_template_id',
+    'type' => 'Integer',
+    'default' => NULL,
+    'add' => '1.0',
+    'is_domain' => 1,
+    'is_contact' => 0,
+    'title' => E::ts('Welcome Message Template'),
+    'description' => '',
+    'help_text' => '',
+    'html_type' => 'select',
+    'html_attributes' => [
+      'multiple' => 0,
+      'class' => 'crm-select2',
+    ],
+    'pseudoconstant' => [
+      'callback' => 'CRM_Symbiotic_Utils::listOfMessageTemplates',
+    ],
+    'settings_pages' => [
+      'aegir' => [
+        'weight' => 30,
+      ],
+    ],
+  ],
 ];

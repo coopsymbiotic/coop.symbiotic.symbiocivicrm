@@ -52,8 +52,7 @@ class Welcome extends \Civi\Api4\Generic\AbstractAction {
     ]);
 
     // @todo Use the site language and send translated template, if available
-    // @todo Hardcoded template ID
-    $msg_template_id = 260;
+    $msg_template_id = \Civi::settings()->get('symbiocivicrm_welcome_template_id');
 
     $tplParams = [
       'civicrm_site_login_url' => $this->loginurl,
