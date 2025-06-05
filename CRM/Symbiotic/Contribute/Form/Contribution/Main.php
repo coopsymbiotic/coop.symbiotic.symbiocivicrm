@@ -97,6 +97,7 @@ class CRM_Symbiotic_Contribute_Form_Contribution_Main {
 
       $exists = \Civi\Api4\Contribution::get(FALSE)
         ->addWhere('Spark.Domain_name', '=', $fields[$custom])
+        ->addWhere('contribution_status_id:name', '=', 'Completed')
         ->execute()
         ->first();
 
