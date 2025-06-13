@@ -89,6 +89,20 @@ class Getconfig extends \Civi\Api4\Generic\AbstractAction {
       throw new \Exception("Symbiocivicrm.Getconfig: Unexpected contact type: {$contact['contact_type']}");
     }
 
+    // Membership information
+    $membership_id = \CRM_Core_DAO::singleValueQuery('SELECT membership_id FROM civicrm_membership_payment WHERE contribution_id = %1', [
+      1 => [$contribution['id'], 'Positive'],
+    ]);
+
+    if ($membership_id) {
+      $membership = \Civi\Api4\Membership::get(FALSE)
+        ->addSelect('*', 'membership_type_id:name')
+        ->addWhere('id', '=', $membership_id)
+        ->execute()
+        ->single();
+      $settings['membership'] = $membership;
+    }
+
     // Site information
     $site_name_fieldid = \Civi::settings()->get('symbiocivicrm_site_name_fieldid');
     $site_locale_fieldid = \Civi::settings()->get('symbiocivicrm_aegir_server_fieldid');
