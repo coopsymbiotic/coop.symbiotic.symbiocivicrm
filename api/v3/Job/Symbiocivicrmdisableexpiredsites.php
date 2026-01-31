@@ -8,10 +8,16 @@ function civicrm_api3_job_symbiocivicrmdisableexpiredsites($params) {
     throw new Exception('symbiocivicrm_membership_types setting not set (Aegir settings)');
   }
 
-  // Find CiviCRM Spark memberships that have expired recently
+  // Find CiviCRM Spark memberships that expired in the last 3 months
+  // (sometimes there is backlog or snafu or whatnot)
+  $endDate = new \DateTime();
+  $endDate->modify('-3 months');
+
   $memberships = \Civi\Api4\Membership::get(FALSE)
     ->addWhere('membership_type_id', 'IN', $hosting_mtypes)
-    ->addWhere('status_id:name', '=', 'Expired')
+    ->addWhere('status_id:name', 'IN', ['Cancelled', 'Expired'])
+    ->addWhere('end_date', '>', $endDate->format('Y-m-d'))
+    ->addWhere('end_date', '<', date('Y-m-d'))
     ->addOrderBy('end_date', 'DESC')
     ->execute();
 
@@ -24,7 +30,7 @@ function civicrm_api3_job_symbiocivicrmdisableexpiredsites($params) {
     ]);
 
     foreach ($result['values'] as $payment) {
-      // Find the invoice_id for that membership
+      // Find the invoice_id for that membership, it is used to authenticate Aegir API requests
       $contribution = \Civi\Api4\Contribution::get(false)
         ->addSelect('id', 'trxn_id', 'invoice_id', 'Spark.Domain_name', 'Spark.Language')
         ->addWhere('id', '=', $payment['contribution_id'])
@@ -44,49 +50,14 @@ function civicrm_api3_job_symbiocivicrmdisableexpiredsites($params) {
         $site_url .= '.' . $suffix;
       }
 
-      // Now double-check if there hasn't been a more recent payment
-      $latest = \Civi\Api4\Contribution::get(false)
-        ->addSelect('id', 'receive_date')
-        ->addWhere('Spark.Domain_name', '=', $contribution['Spark.Domain_name'])
-        ->addOrderBy('receive_date', 'DESC')
-        ->setLimit(1)
-        ->execute()
-        ->first();
-
-      $d1 = new DateTime($latest['receive_date']);
-      $d2 = new DateTime();
-      $interval = $d1->diff($d2);
-
-      if ($interval->days < 40) {
-        // Hosting is being paid by another membership
-        // Find the membership associated to $latest
-        $result = civicrm_api3('MembershipPayment', 'get', [
-          'sequential' => 1,
-          'options' => ['sort' => "contribution_id ASC", 'limit' => 1],
-          'contribution_id' => $latest['id'],
-        ]);
-
-        // Cancel this old membership
-        \Civi\Api4\Membership::update(false)
-          ->addValue('status_id:name', 'Cancelled')
-          ->addValue('is_override', 1)
-          ->addWhere('id', '=', $membership['id'])
-          ->execute();
-
-        $responses[] = $site_url . ': membership ID ' . $membership['id'] . ' is now being paid by membership ID: ' . $result['values'][0]['membership_id'] . ' - membership cancelled';
-        continue;
-      }
-
       $try_invoice_ids = [
         // This is the first part of the trxn_id
         $invoice_id,
         // Sometimes it was this
         $contribution['invoice_id'],
-        // And sometimes there were bugs and we sent both Stripe identifies
+        // And sometimes there were bugs and we sent both Stripe identifiers
         $contribution['trxn_id'],
       ];
-
-      $response_code = '';
 
       foreach ($try_invoice_ids as $try_id) {
         $response_code = _civicrm_api3_job_symbiocivicrmdisableexpiredsites_disable($aegir_server, $site_url, $try_id, $responses);
@@ -98,7 +69,6 @@ function civicrm_api3_job_symbiocivicrmdisableexpiredsites($params) {
             ->addValue('is_override', 1)
             ->addWhere('id', '=', $membership['id'])
             ->execute();
-
           break;
         }
       }
