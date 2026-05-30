@@ -9,7 +9,6 @@
 
 #symbiocivicrm-statusbox-ready .symbiocivicrm-statusbox-btn-wrapper {
   display: block;
-  text-align: center;
   /* top has margin from previous paragraph */
   padding: 0.5em 0 1em 0;
 }
@@ -22,5 +21,13 @@
 }
 
 #symbiocivicrm-statusbox-ready.hidden {
+  display: none;
+}
+
+/**
+ * Hide the traditional ThankYou details, redundant with the receipt
+ */
+.crm-contribution-thankyou-form-block > .crm-group,
+.crm-contribution-thankyou-form-block > .crm-profile-view {
   display: none;
 }

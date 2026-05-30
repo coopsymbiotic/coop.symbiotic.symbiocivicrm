@@ -21,6 +21,7 @@ class CRM_Symbiotic_Contribute_Form_Contribution_ThankYou {
     // On which server to create the site
     $aegir_server_field_id = Civi::settings()->get('symbiocivicrm_aegir_server_fieldid');
     $server = CRM_Symbiotic_Utils::getAegirServer($form->_params['custom_' . $aegir_server_field_id]);
+    $language = CRM_Symbiotic_Utils::getSiteLanguage($form->_params['custom_' . $aegir_server_field_id]);
 
     $contact_id = $form->_contactID;
 
@@ -63,6 +64,7 @@ class CRM_Symbiotic_Contribute_Form_Contribution_ThankYou {
       return;
     }
 
+    Civi::log()->info("AEGIR createDnsHost: $url $server");
     CRM_Symbiotic_Utils::createDnsHost($url, $server);
 
     if ($suffix = Civi::settings()->get('symbiocivicrm_domain_suffix')) {
@@ -75,6 +77,7 @@ class CRM_Symbiotic_Contribute_Form_Contribution_ThankYou {
         'url' => $url,
         'email' => $email,
         'server' => $server,
+        'language' => $language,
         // Ex: example.org, helps with our .org to .com migration
         'crmhost' => 'https://' . $_SERVER['SERVER_NAME'],
       ],

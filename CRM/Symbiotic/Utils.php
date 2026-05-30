@@ -47,6 +47,32 @@ class CRM_Symbiotic_Utils {
   }
 
   /**
+   * Given an OptionValue value, return the associated language/locale.
+   * This function duplicates code from getAegirServer()
+   */
+  public static function getSiteLanguage($value) {
+    $site_locale_fieldid = Civi::settings()->get('symbiocivicrm_aegir_server_fieldid');
+
+    $og = civicrm_api3('CustomField', 'get', [
+      'id' => $site_locale_fieldid,
+      'return' => 'option_group_id',
+      'sequential' => 1,
+    ])['values'][0]['option_group_id'];
+
+    $server = civicrm_api3('OptionValue', 'get', [
+      'option_group_id' => $og,
+      'value' => $value,
+      'sequential' => 1,
+    ])['values'][0]['description'];
+
+    // Ex: aegir-1.example.org;fr_CA
+    $parts = explode(';', $server);
+    $language = $parts[1];
+
+    return $language;
+  }
+
+  /**
    *
    */
   public static function getLocaleFromValue($value) {
