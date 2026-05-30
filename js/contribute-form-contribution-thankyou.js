@@ -63,7 +63,7 @@
           $('#symbiocivicrm-statusbox h2').html(ts('Error'));
           $('#symbiocivicrm-statusbox-message').html(ts('Site creation failed. Very sorry for the inconvenience, we will fix it as soon as possible. Invoice ID:') + CRM.symbiocivicrm.trxn_id).addClass('text-danger');
           $('#symbiocivicrm-statusbox-icon i').removeClass('fa-spin fa-refresh').addClass('fa-exclamation-circle text-danger');
-          $('#symbiocivicrm-statusbox-extra').html(data.message + ' ' + '<a href="#" id="symbiocivicrm-retry">' + ts('Click here to retry') + '</a>');
+          $('#symbiocivicrm-statusbox-extra').html(data.data.message + ' ' + '<a href="#" id="symbiocivicrm-retry">' + ts('Retry') + '</a>');
           $('#symbiocivicrm-statusbox-extra').show();
 
           $('a#symbiocivicrm-retry').click(function(event) {
